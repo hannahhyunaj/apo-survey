@@ -16,8 +16,8 @@
   --ink-faint:#A6957E;
   --line:#EDE1C4;
   --line-soft:#F6EED7;
-  --primary:#adb6ff;
-  --primary-deep:#8699f7;
+  --primary:#808bde;
+  --primary-deep:#4c64dd;
   --accent:#C98FA6;
   --accent-deep:#A2647E;
   --accent-soft:#F5E2E9;
@@ -817,11 +817,9 @@ function findQuestion(qid){
 const pagesContainer = document.getElementById("pages-container");
 
 function svgIcon(name){
-  // 기존 아이콘은 유지, 'doc' 아이콘만 첫 화면 중앙에서 📑 이모지로 대체
   const icons = {
-    key:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"></circle><path d="M10.5 12.5L20 3M20 3h-4M20 3v4"></path></svg>',
-    // doc 아이콘은 첫 화면 중앙에서만 📑 이모지로 대체
-    doc:'📑',
+    key: '📑',
+    doc: '📑',
   };
   return icons[name] || "";
 }
@@ -830,7 +828,7 @@ function buildGatePage(page){
   const el = document.createElement("div");
   el.className = "hero-page";
   el.innerHTML = `
-    <div class="icon-mark">${svgIcon('key')}</div>
+    <div class="icon-mark">📑</div>
     <h2>코드를 입력해 주세요</h2>
     <p>사전에 안내받으신 코드를 입력하시면<br>배정된 사건으로 설문을 시작합니다.</p>
   `;
