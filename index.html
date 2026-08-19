@@ -297,7 +297,7 @@ const PAGES = [
 
 // 새로운 prominent reminder page 삽입
 { id:"reminder", kind:"reminder", title:"응답 전 안내", color:"#8C8577",
-  reminder:"지금부터 드리는 질문은 위에 제시된 특정 사건 1건을 기준으로 응답해 주시기 바랍니다. 응답을 시작하시기 전, 눈을 감고 해당 사건을 다시 한번 떠올려 봐 주십시오. 충분히 상기하셨다면 아래 버튼을 눌러 설문에 참여해 주세요." },
+  reminder:"지금부터 드리는 질문은 다음 페이지에 제시될 특정 사건 1건을 기준으로 응답해 주시기 바랍니다. \n\n응답을 시작하시기 전, 눈을 감고 해당 사건을 다시 한번 떠올려 봐 주십시오. \n\n충분히 상기하셨다면 아래 버튼을 눌러 설문에 참여해 주세요." },
 
 { id:"ready", kind:"ready", title:"사건 개요", color:"#8C8577" },
 
@@ -1175,8 +1175,8 @@ function updateNavUI(){
   progressTitle.textContent = page.kind === "form" ? page.title : (page.kind === "gate" ? "시작하기" : page.kind === "consent" ? "참여 동의" : "사건 확인");
   btnPrev.disabled = (pageIndex === 0);
   const isLast = (pageIndex === total-1);
-  if(page.kind === "gate"){ btnNext.textContent = "다음"; btnPrev.disabled = true; }
-  else if(page.kind === "ready"){ btnNext.textContent = "네, 설문에 참여하겠습니다"; }
+  if(page.kind === "gate"){ btnNext.textContent = "네, 설문에 참여하겠습니다."; btnPrev.disabled = true; }
+  else if(page.kind === "ready"){ btnNext.textContent = "사건에 대해 충분히 상기했습니다."; }
   else if(isLast){ btnNext.textContent = "제출하기"; }
   else { btnNext.textContent = "다음"; }
 }
