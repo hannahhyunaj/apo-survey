@@ -3,23 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>관계성범죄 사건담당자 설문 - APO용</title>
+<title>관계성범죄 사건담당자 설문</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
 :root{
-  --navy:#1B3A5C;
-  --navy-light:#2E5580;
-  --paper:#F6F7FA;
-  --card:#FFFFFF;
-  --ink:#1F2733;
-  --ink-soft:#5B6472;
-  --line:#E2E5EA;
-  --amber:#C9862E;
-  --amber-soft:#F5E6D0;
-  --error:#C0392B;
-  --ok:#3E7A5C;
-  --radius:12px;
+  --paper:#F6F1E7;
+  --card:#FFFDF9;
+  --card-soft:#FBF7EF;
+  --ink:#332F29;
+  --ink-soft:#726B5E;
+  --ink-faint:#9B927F;
+  --line:#E7DFCD;
+  --line-soft:#F0E9D8;
+  --primary:#57697A;
+  --primary-deep:#414F5C;
+  --accent:#8A9A6E;
+  --accent-deep:#71805A;
+  --accent-soft:#E8EDDD;
+  --error:#B2543F;
+  --error-soft:#F3E2DC;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:10px;
+  --shadow-soft:0 4px 18px rgba(84,68,42,0.07);
+  --shadow-lift:0 8px 28px rgba(84,68,42,0.12);
 }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -28,199 +36,207 @@ body{
   font-family:'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
   background:var(--paper);
   color:var(--ink);
-  line-height:1.55;
-  padding-bottom:80px;
+  line-height:1.6;
+  padding-bottom:100px;
+  -webkit-font-smoothing:antialiased;
 }
-@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+}
 
-/* ---------- progress bar ---------- */
+/* ---------- progress ---------- */
 #progress-wrap{
   position:sticky; top:0; z-index:50;
-  background:var(--navy); color:#fff;
-  padding:10px 16px;
-  display:flex; align-items:center; gap:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  background:linear-gradient(180deg, var(--paper) 60%, rgba(246,241,231,0.0));
+  padding:14px 20px 10px;
+  backdrop-filter:blur(6px);
 }
-#progress-track{
-  flex:1; height:6px; background:rgba(255,255,255,0.22); border-radius:3px; overflow:hidden;
-}
-#progress-fill{
-  height:100%; width:0%; background:var(--amber); transition:width .35s ease;
-}
-#progress-label{ font-size:12.5px; white-space:nowrap; opacity:0.92; font-weight:600; }
+#progress-inner{ max-width:660px; margin:0 auto; }
+#progress-top{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:7px; }
+#progress-title{ font-size:12.5px; font-weight:700; color:var(--primary-deep); letter-spacing:.02em; }
+#progress-count{ font-size:11px; color:var(--ink-faint); font-weight:600; }
+#progress-track{ height:5px; background:var(--line-soft); border-radius:4px; overflow:hidden; }
+#progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent-deep)); border-radius:4px; transition:width .45s cubic-bezier(.4,0,.2,1); }
 
-/* ---------- header ---------- */
-header.top{
-  max-width:720px; margin:0 auto; padding:28px 20px 8px;
-}
-header.top .org{ font-size:13px; color:var(--ink-soft); font-weight:600; letter-spacing:.02em;}
-header.top h1{ font-size:22px; margin:6px 0 4px; color:var(--navy); font-weight:800; }
-header.top p.desc{ font-size:14px; color:var(--ink-soft); margin:0 0 10px; }
+header.top{ max-width:660px; margin:0 auto; padding:26px 20px 4px; }
+header.top .org{ font-size:11.5px; color:var(--ink-faint); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+header.top h1{ font-size:20px; margin:8px 0 0; color:var(--primary-deep); font-weight:800; letter-spacing:-.01em; }
 
-.case-card{
-  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-  padding:14px 16px; margin:14px 0 0; display:grid; gap:8px;
-  grid-template-columns:1fr 1fr; font-size:13.5px;
-}
-.case-card .item{ display:flex; flex-direction:column; gap:2px; }
-.case-card .item .k{ color:var(--ink-soft); font-size:11.5px; }
-.case-card .item .v{ font-weight:700; color:var(--navy); }
-.case-card .badge{
-  display:inline-block; font-size:10.5px; background:var(--amber-soft); color:#8A5A17;
-  padding:1px 7px; border-radius:20px; margin-left:6px; font-weight:700; vertical-align:middle;
-}
-@media (max-width:480px){ .case-card{ grid-template-columns:1fr; } }
+main{ max-width:660px; margin:0 auto; padding:10px 20px 20px; min-height:56vh; position:relative; }
 
-/* ---------- main container ---------- */
-main{ max-width:720px; margin:0 auto; padding:8px 20px 40px; }
+/* ---------- pages / transitions ---------- */
+#pages-container{ position:relative; }
+.page{ display:none; width:100%; }
+.page.active{ display:block; }
+#pages-container.transitioning{ overflow:hidden; }
+#pages-container.transitioning .page.active,
+#pages-container.transitioning .page.incoming{
+  position:absolute; top:0; left:0; width:100%;
+  will-change:transform,opacity;
+}
 
-.section{
-  margin-top:34px; padding-top:10px;
-}
-.section-head{
-  display:flex; align-items:center; gap:10px; margin-bottom:14px;
-  border-left:5px solid var(--sec-color, var(--navy));
-  padding-left:12px;
-}
-.section-head h2{ font-size:16px; margin:0; color:var(--navy); font-weight:800; }
-.section-intro{
-  background:#EEF2F7; border-radius:var(--radius); padding:14px 16px; font-size:14px;
-  color:var(--ink-soft); margin-bottom:16px; border:1px dashed var(--line);
-}
-.section-intro.thanks{ background:#EAF3EE; border-color:#BFE0CC; color:#2C5A40; font-size:14.5px; text-align:center; }
+.page-eyebrow{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sec-color, var(--accent-deep)); margin-bottom:5px; }
+.page-head{ margin:16px 0 16px; }
+.page-head h2{ font-size:18px; margin:0; color:var(--ink); font-weight:800; letter-spacing:-.01em; }
+.page-intro{ background:var(--card-soft); border-radius:var(--radius-md); padding:14px 17px; font-size:13.6px; color:var(--ink-soft); margin-bottom:16px; border:1px solid var(--line-soft); }
 
 /* ---------- question card ---------- */
-.q{
-  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-  padding:16px 16px 14px; margin-bottom:12px;
-  transition:opacity .25s ease, transform .25s ease, box-shadow .15s ease;
-}
+.q{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 18px 15px; margin-bottom:13px; box-shadow:var(--shadow-soft); }
 .q.hidden{ display:none; }
-.q.appear{ animation:fadeIn .3s ease; }
-@keyframes fadeIn{ from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);} }
-.q.invalid{ border-color:var(--error); box-shadow:0 0 0 3px rgba(192,57,43,0.08); }
-.q-text{ font-size:14.5px; font-weight:600; margin-bottom:10px; }
-.q-text .req{ color:var(--error); margin-left:2px; }
-.q-note{ font-size:12px; color:var(--ink-soft); margin:-4px 0 10px; }
-.q-error{ display:none; font-size:12px; color:var(--error); margin-top:6px; font-weight:600; }
+.q.invalid{ border-color:var(--error); box-shadow:0 0 0 3px var(--error-soft); }
+.q-text{ font-size:14.5px; font-weight:700; margin-bottom:11px; color:var(--ink); }
+.q-text .req{ color:var(--error); margin-left:2px; font-weight:700; }
+.q-note{ font-size:12px; color:var(--ink-faint); margin:-5px 0 11px; line-height:1.55; }
+.q-error{ display:none; font-size:12px; color:var(--error); margin-top:7px; font-weight:700; }
 .q.invalid .q-error{ display:block; }
 
-/* option lists */
 .opt-list{ display:flex; flex-direction:column; gap:8px; }
-.opt{
-  display:flex; align-items:flex-start; gap:9px; padding:9px 10px; border:1px solid var(--line);
-  border-radius:9px; cursor:pointer; font-size:13.8px; transition:background .12s, border-color .12s;
-}
-.opt:hover{ background:#F3F5F8; }
-.opt input{ margin-top:2px; accent-color:var(--navy); width:16px; height:16px; flex:none; }
-.opt.checked{ border-color:var(--navy); background:#EDF2F8; }
-.other-text{
-  margin-top:8px; margin-left:26px; width:calc(100% - 26px);
-  padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-size:13.5px;
-  font-family:inherit; display:none;
-}
+.opt{ display:flex; align-items:flex-start; gap:10px; padding:11px 13px; border:1px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; font-size:13.8px; transition:background .15s,border-color .15s; background:var(--card-soft); }
+.opt:hover{ background:var(--accent-soft); border-color:#D8CBAE; }
+.opt input{ margin-top:2px; accent-color:var(--accent-deep); width:16px; height:16px; flex:none; }
+.opt.checked{ border-color:var(--accent-deep); background:var(--accent-soft); }
+.other-text{ margin-top:8px; margin-left:26px; width:calc(100% - 26px); padding:9px 12px; border:1px solid var(--line); border-radius:var(--radius-sm); font-size:13.5px; font-family:inherit; display:none; background:#fff; }
 .other-text.show{ display:block; }
 
-/* text inputs */
-input[type=text].qi, textarea.qi{
-  width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:9px;
-  font-family:inherit; font-size:13.8px; resize:vertical;
-}
-textarea.qi{ min-height:70px; }
-input[type=text].qi:focus, textarea.qi:focus, select.qi:focus{ outline:2px solid var(--navy-light); outline-offset:1px; }
+input[type=text].qi, textarea.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:var(--radius-sm); font-family:inherit; font-size:13.8px; resize:vertical; background:#fff; }
+textarea.qi{ min-height:74px; }
+input[type=text].qi:focus, textarea.qi:focus, select.qi:focus{ outline:2px solid var(--accent-deep); outline-offset:1px; }
 
-/* likert */
-.likert-row{ display:flex; gap:6px; justify-content:space-between; align-items:center; }
-.likert-btn{
-  flex:1; text-align:center; padding:10px 4px; border:1px solid var(--line); border-radius:9px;
-  cursor:pointer; font-weight:700; font-size:14px; color:var(--ink-soft); background:#fff;
-}
-.likert-btn.checked{ background:var(--navy); color:#fff; border-color:var(--navy); }
-.likert-labels{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:6px; }
+.likert-row{ display:flex; gap:7px; justify-content:space-between; }
+.likert-btn{ flex:1; text-align:center; padding:11px 4px; border:1px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; font-weight:700; font-size:14px; color:var(--ink-soft); background:var(--card-soft); }
+.likert-btn.checked{ background:var(--primary); color:#fff; border-color:var(--primary); }
+.likert-labels{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-faint); margin-top:7px; }
 
-/* grid/matrix */
-.grid-wrap{ display:flex; flex-direction:column; gap:0; border:1px solid var(--line); border-radius:9px; overflow:hidden; }
-.grid-head{ display:none; }
-.grid-row{ display:flex; flex-direction:column; padding:10px 12px; border-bottom:1px solid var(--line); background:#fff; }
+.grid-wrap{ display:flex; flex-direction:column; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden; }
+.grid-row{ display:flex; flex-direction:column; padding:12px 14px; border-bottom:1px solid var(--line-soft); background:var(--card); }
 .grid-row:last-child{ border-bottom:none; }
-.grid-row .g-label{ font-size:13.5px; font-weight:600; margin-bottom:8px; }
+.grid-row .g-label{ font-size:13.5px; font-weight:600; margin-bottom:9px; }
 .grid-row .g-opts{ display:flex; gap:8px; }
-.grid-opt{
-  flex:1; text-align:center; padding:8px 4px; border:1px solid var(--line); border-radius:8px;
-  cursor:pointer; font-size:13px; background:#FAFBFC;
-}
-.grid-opt.checked{ background:var(--navy); color:#fff; border-color:var(--navy); }
+.grid-opt{ flex:1; text-align:center; padding:9px 4px; border:1px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; font-size:13px; background:var(--card-soft); }
+.grid-opt.checked{ background:var(--primary); color:#fff; border-color:var(--primary); }
 @media (min-width:640px){
   .grid-row{ flex-direction:row; align-items:center; justify-content:space-between; }
   .grid-row .g-label{ margin-bottom:0; flex:1; padding-right:14px; }
   .grid-row .g-opts{ flex:0 0 260px; }
 }
 
-/* select (rank) */
-select.qi{ width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:9px; font-family:inherit; font-size:13.8px; background:#fff; }
-.rank-group{ display:flex; flex-direction:column; gap:10px; }
-.rank-item{ display:flex; align-items:center; gap:10px; }
-.rank-item .rank-no{
-  flex:none; width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff;
-  display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:800;
-}
+select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:var(--radius-sm); font-family:inherit; font-size:13.8px; background:#fff; }
 
-/* info banner */
-.q.info{ background:#EEF2F7; border:1px dashed var(--line); box-shadow:none; }
-.q.info .q-text{ font-weight:500; color:var(--ink-soft); font-size:13.8px; }
+.blank-preview{ margin-top:10px; font-size:13.5px; color:var(--primary-deep); background:var(--accent-soft); border-radius:var(--radius-sm); padding:10px 13px; display:none; }
+.blank-preview.show{ display:block; }
+.blank-preview b{ font-weight:800; }
 
-/* footer / submit */
-#submit-wrap{
-  position:sticky; bottom:0; background:linear-gradient(180deg, rgba(246,247,250,0) 0%, var(--paper) 30%);
-  padding:20px 20px 26px; text-align:center;
-}
-#submit-btn{
-  background:var(--navy); color:#fff; border:none; padding:14px 36px; border-radius:30px;
-  font-size:15.5px; font-weight:800; cursor:pointer; box-shadow:0 6px 18px rgba(27,58,92,0.28);
-  font-family:inherit;
-}
-#submit-btn:active{ transform:translateY(1px); }
-#submit-btn:disabled{ opacity:.6; cursor:progress; }
-#submit-hint{ font-size:12px; color:var(--ink-soft); margin-top:8px; }
+/* ---------- gate / consent / ready ---------- */
+.hero-page{ text-align:center; padding:30px 4px 10px; }
+.hero-page .icon-mark{ width:52px; height:52px; margin:0 auto 14px; border-radius:16px; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; }
+.hero-page .icon-mark svg{ width:24px; height:24px; stroke:var(--accent-deep); }
+.hero-page h2{ color:var(--ink); font-size:19px; margin:0 0 6px; font-weight:800; }
+.hero-page p{ color:var(--ink-soft); font-size:13.8px; line-height:1.75; }
+.gate-input{ width:100%; max-width:340px; margin:20px auto 8px; display:block; text-align:center; font-size:16px; padding:14px; border:1.5px solid var(--line); border-radius:var(--radius-md); font-family:inherit; background:#fff; }
+.gate-input:focus{ outline:2px solid var(--accent-deep); border-color:var(--accent-deep); }
+.gate-example{ font-size:12px; color:var(--ink-faint); margin-bottom:6px; }
+.gate-error{ display:none; color:var(--error); font-size:13px; font-weight:700; margin-top:12px; background:var(--error-soft); border-radius:var(--radius-sm); padding:10px 14px; }
+.gate-error.show{ display:block; }
 
-/* thank you screen */
-#thankyou{ display:none; max-width:560px; margin:80px auto; text-align:center; padding:0 20px; }
-#thankyou h2{ color:var(--navy); font-size:22px; }
-#thankyou p{ color:var(--ink-soft); font-size:14.5px; }
+.consent-box{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px; font-size:13.6px; color:var(--ink-soft); text-align:left; line-height:1.8; margin:18px 0; box-shadow:var(--shadow-soft); white-space:pre-wrap; }
+.consent-box b{ color:var(--ink); }
+
+.ready-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px; text-align:left; margin:18px 0; box-shadow:var(--shadow-soft); }
+.ready-card .row{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--line-soft); }
+.ready-card .row:last-child{ border-bottom:none; }
+.ready-card .k{ color:var(--ink-faint); }
+.ready-card .v{ font-weight:700; color:var(--primary-deep); }
+
+.dossier-badge{ display:inline-block; background:var(--primary); color:#fff; font-size:12px; font-weight:800; padding:6px 14px; border-radius:20px; margin-bottom:14px; letter-spacing:.01em; }
+.dossier-section{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px 18px; margin-bottom:12px; text-align:left; box-shadow:var(--shadow-soft); }
+.dossier-section-title{ font-size:11.5px; font-weight:800; color:var(--primary-deep); text-transform:uppercase; letter-spacing:.05em; margin-bottom:11px; }
+.kv-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px 18px; }
+.kv-grid.single{ grid-template-columns:1fr; }
+.kv-grid .kv{ display:flex; flex-direction:column; gap:2px; padding:6px 0; border-bottom:1px solid var(--line-soft); }
+.kv-grid .kv:last-child, .kv-grid .kv:nth-last-child(2):nth-child(odd){ border-bottom:none; }
+.kv .k{ font-size:11px; color:var(--ink-faint); }
+.kv .v{ font-size:13.5px; font-weight:700; color:var(--ink); }
+@media (max-width:480px){ .kv-grid{ grid-template-columns:1fr; } .kv-grid .kv{ border-bottom:1px solid var(--line-soft) !important; } .kv-grid .kv:last-child{ border-bottom:none !important; } }
+
+.scale-toggle{ width:100%; display:flex; justify-content:space-between; align-items:center; background:var(--card-soft); border:1px solid var(--line); border-radius:var(--radius-md); padding:13px 16px; cursor:pointer; font-size:13.8px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.scale-toggle .score-badge{ background:var(--accent-soft); color:var(--accent-deep); border-radius:20px; padding:4px 11px; font-size:12px; font-weight:800; }
+.scale-body{ display:none; margin:-4px 0 12px; }
+.scale-body.open{ display:block; }
+
+.coding-table{ width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden; margin-bottom:0; background:var(--card); }
+.coding-table th, .coding-table td{ padding:8px 12px; font-size:13px; text-align:left; border-bottom:1px solid var(--line-soft); }
+.coding-table th{ background:var(--card-soft); color:var(--ink-soft); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; }
+.coding-table tr:last-child td{ border-bottom:none; }
+.coding-table td.score-col{ text-align:right; font-weight:700; color:var(--primary-deep); width:90px; }
+.dossier-error{ font-size:12px; color:var(--error); background:var(--error-soft); border-radius:var(--radius-sm); padding:10px 13px; margin-bottom:12px; }
+
+.spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; margin-right:7px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ---------- bottom nav ---------- */
+#page-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:linear-gradient(0deg, var(--paper) 55%, rgba(246,241,231,0));
+  padding:16px 20px calc(14px + env(safe-area-inset-bottom));
+  display:flex; justify-content:center;
+}
+#page-nav .inner{ max-width:660px; width:100%; display:flex; justify-content:space-between; gap:10px; }
+.nav-btn{ font-family:inherit; border-radius:30px; padding:13px 24px; font-size:14.5px; font-weight:800; cursor:pointer; border:none; letter-spacing:-.005em; }
+.nav-btn.primary{ background:var(--primary); color:#fff; box-shadow:var(--shadow-lift); }
+.nav-btn.primary:hover{ background:var(--primary-deep); }
+.nav-btn.primary:disabled{ opacity:.55; cursor:progress; }
+.nav-btn.ghost{ background:var(--card); color:var(--ink-soft); border:1px solid var(--line); }
+.nav-btn.ghost:disabled{ visibility:hidden; }
+.nav-btn.wide{ flex:1; }
+
+/* ---------- terminal screens ---------- */
+#thankyou, #declined{ display:none; max-width:520px; margin:100px auto; text-align:center; padding:0 20px; }
+#thankyou h2, #declined h2{ color:var(--primary-deep); font-size:21px; font-weight:800; }
+#thankyou p, #declined p{ color:var(--ink-soft); font-size:14px; }
+.terminal-mark{ width:56px; height:56px; margin:0 auto 16px; border-radius:18px; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:24px; }
 
 .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-a{color:var(--navy);}
 </style>
 </head>
 <body>
 
 <div id="progress-wrap">
-  <div id="progress-track"><div id="progress-fill"></div></div>
-  <div id="progress-label">0%</div>
+  <div id="progress-inner">
+    <div id="progress-top">
+      <span id="progress-title">시작하기</span>
+      <span id="progress-count"></span>
+    </div>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+  </div>
 </div>
 
 <header class="top">
   <div class="org">동국대학교 경찰행정학과 법심리연구소</div>
-  <h1>관계성범죄 사건담당자 설문 (APO용)</h1>
-  <p class="desc">가정폭력·스토킹·교제폭력 통합 재발위험 평가척도 및 모니터링 관리체계 개발연구</p>
-  <div class="case-card" id="case-card"></div>
+  <h1>관계성범죄 사건담당자 설문</h1>
 </header>
 
-<main>
-  <div class="section-intro" style="margin-top:6px;">
-    본 설문은 사전에 안내드린 특정 사건 1건을 기준으로 응답해 주시기 바랍니다. 위 사건 정보가 다르면 화면 상단 정보를 참고하시고, 잘못된 부분이 있으면 <strong>choiyea02@naver.com</strong>(최예영 연구원)으로 알려주십시오. 응답 내용은 연구 목적으로만 사용되며 개인을 특정할 수 있는 정보는 결과에 포함되지 않습니다.
-  </div>
-  <div id="sections-container"></div>
-
-  <div id="submit-wrap">
-    <button id="submit-btn" type="button">설문 제출하기</button>
-    <div id="submit-hint">제출 전 응답하지 않은 필수 문항이 있으면 자동으로 알려드립니다.</div>
-  </div>
+<main id="main">
+  <div id="pages-container"></div>
 </main>
 
+<div id="page-nav">
+  <div class="inner">
+    <button id="btn-prev" class="nav-btn ghost" type="button">이전</button>
+    <button id="btn-next" class="nav-btn primary wide" type="button">다음</button>
+  </div>
+</div>
+
 <div id="thankyou">
+  <div class="terminal-mark">✓</div>
   <h2>응답이 제출되었습니다</h2>
   <p>바쁘신 중에도 귀한 시간 내어 응답해 주셔서 진심으로 감사드립니다.<br>현장 경험이 통합 재발위험 평가척도와 모니터링 체계를 다듬는 데 큰 도움이 됩니다.</p>
+</div>
+
+<div id="declined">
+  <div class="terminal-mark">·</div>
+  <h2>설문 참여가 취소되었습니다</h2>
+  <p>동의하지 않으신 것으로 확인되어 설문을 진행하지 않습니다.<br>협조해 주셔서 감사합니다.</p>
 </div>
 
 <iframe name="hidden_submit_target" class="visually-hidden" title="submit target"></iframe>
@@ -228,10 +244,10 @@ a{color:var(--navy);}
 
 <script>
 /* =========================================================
-   0. 설정 — Apps Script 배포 후 이 URL을 교체하세요
+   0. 설정
    ========================================================= */
 const CONFIG = {
-  SUBMIT_URL: "https://script.google.com/macros/s/AKfycbwXaS7VBFKOJBLVwW3trpeQEZf-ANIW5o_HP5B9r8YtjJKp1kdlLWa6QEGAciDfpIVQrw/exec"
+  SUBMIT_URL: "https://hannahhyunaj.github.io/apo-survey/"
 };
 
 /* =========================================================
@@ -251,120 +267,164 @@ const CM_POOL = [
 ];
 const GRID_OPTS = ["있음","없음","확인 불가"];
 const LIKERT5 = ["1","2","3","4","5"];
+const CRIME_TYPES = ["가정폭력","스토킹","교제폭력"];
 
 /* =========================================================
-   2. 섹션/문항 데이터
+   2. 페이지 데이터
+   kind: 'gate' | 'consent' | 'ready' | 'form'
+   pageRole: 'apo' | 'investigator' (없으면 공통)
+   pageCaseType: 'recur' (재발 사건에만 노출, 없으면 항상)
+   문항의 role: 'apo' | 'investigator' (없으면 공통)
    ========================================================= */
-const SECTIONS = [
-{ id:"s0", title:"기본 정보", color:"#8891A0", intro:"응답을 시작하시기 전, 담당하셨던 해당 사건(신고일자·죄종·가해자-피해자 관계 등)을 다시 한번 떠올려 봐 주십시오. 사건 개요가 잘 기억나지 않으시면 함께 전달해 드린 사건 요약 자료를 참고해 응답해 주시기 바랍니다.",
-  questions:[
-    {id:"B1", type:"text", text:"사건 고유번호", req:true},
-    {id:"B2", type:"radio", text:"죄종", opts:["가정폭력","스토킹","교제폭력"], req:true},
-    {id:"B3", type:"radio", text:"가해자는 피해자에게 어떤 관계였습니까? (가해자를 기준으로 응답)",
-      opts:["현부부","전부부","현연인","전연인","사실혼","부모","조부모","자녀","형제자매","기타 친인척","친구·선후배","직장관계","이웃","기타 아는 사람","온라인에서만 아는 관계","전혀 모르는 사람","기타(자유 기입)"], req:true},
+const PAGES = [
+
+{ id:"gate", kind:"gate", title:"코드 확인", color:"#8C8577" },
+
+{ id:"consent", kind:"consent", title:"참여 동의", color:"#8C8577",
+  consentText:
+`본 설문은 동국대학교 경찰행정학과 법심리연구소에서 수행하는 「가정폭력·스토킹·교제폭력 통합 재발위험 평가척도 및 모니터링 관리체계 개발연구」의 일환으로 진행됩니다.
+
+담당하셨던 사건 경험을 바탕으로 가해자 위험요인과 피해자 관련 요인(취약·욕구·반응성 등)을 파악하기 위한 목적으로 실시하며, 응답 내용은 연구 목적으로만 사용되고 사건이나 개인을 특정할 수 있는 정보는 결과에 포함되지 않습니다.
+
+설문 참여는 자발적이며, 참여 도중 언제든지 중단하실 수 있습니다. 소요 시간은 약 20분입니다.
+
+문의: 최예영 연구원 (choiyea02@naver.com)
+
+위 내용에 동의하십니까?` },
+
+{ id:"ready", kind:"ready", title:"사건 확인", color:"#8C8577",
+  reminder:"지금부터 드리는 질문은 위에 제시된 특정 사건 1건을 기준으로 응답해 주시기 바랍니다. 응답을 시작하시기 전, 눈을 감고 해당 사건을 다시 한번 떠올려 봐 주십시오. 충분히 상기하셨다면 아래 버튼을 눌러 설문에 참여해 주세요." },
+
+{ id:"s0b", kind:"form", title:"기본 정보", eyebrow:"0", color:"#8C8577", questions:[
+    {id:"B3", type:"radio", text:"가해자는 피해자와 어떤 관계였습니까?",
+      note:"가해자는 피해자에게 다음 중 무엇이었습니까?",
+      opts:["현부부","전부부","현연인","전연인","사실혼","부모","조부모","자녀","형제자매","기타 친인척","친구·선후배","직장관계","이웃","기타 아는 사람","온라인에서만 아는 관계","전혀 모르는 사람","기타(자유 기입)"],
+      req:true, noAutoOther:true, blankPreview:"가해자는 피해자에게 {value}이었음"},
     {id:"B3-1", type:"text", text:"구체적으로 적어 주십시오.", req:true, cond:{on:"B3", op:"=", val:"기타(자유 기입)"}},
   ]},
 
-{ id:"s1", title:"1. 피해자 — 취약요인", color:"#C97B63", questions:[
+{ id:"s1", kind:"form", title:"피해자 — 취약요인", eyebrow:"1", color:"#C79574", questions:[
     {id:"V1", type:"checkbox", text:"이 피해자에게 해당하는 취약요인을 모두 선택해 주십시오.",
+      note:"* 취약요인: 피해자가 스스로를 보호하기 어렵게 만들거나 피해 위험을 높이는 개인적·환경적 특성",
       opts:["임신 여부","자살충동·경향","생활환경 위험성","신체건강 문제","가해자와의 공동자녀 유무","장애 여부","문화적·언어적 장벽","지리적 고립","자원 및 지원체계 접근성 부족","재정적 취약성(채무 등)","해당사항 없음","기타(직접입력)"], req:true},
-    {id:"V2", type:"radio", text:"이 피해자는 가해자를 대하는 태도가 일관되었습니까?", opts:["예(일관되었음)","아니오(일관되지 않았음)","확인 불가"], req:true},
-    {id:"V2-1", type:"checkbox", text:"구체적으로 어떤 모습이었습니까? 해당하는 것을 모두 선택해 주십시오.",
-      opts:["가해자와의 접촉을 계속 유지함","피해 진술을 축소하거나 번복함","처벌 의사를 표명했다가 철회함","기타(직접입력)"], req:true, cond:{on:"V2", op:"=", val:"아니오(일관되지 않았음)"}},
-    {id:"V3-1", type:"radio", text:"이 피해자는 이용 가능한 지원제도(상담·의료·법률·주거 지원 등)의 존재를 알고 있었습니까?", opts:["예","아니오","확인 불가"], req:true},
-    {id:"V3-2", type:"radio", text:"지원제도를 알고 있었음에도 실제로 접근하기 어려운 사정이 있었습니까?", opts:["예","아니오","확인 불가"], req:true, cond:{on:"V3-1", op:"=", val:"예"}},
-    {id:"V3-3", type:"checkbox", text:"어떤 사정이었습니까? 해당하는 것을 모두 선택해 주십시오.",
-      opts:["정보 부족(구체적 이용 방법을 몰랐음)","지리적 고립(거리·교통 문제)","언어장벽","기타(직접입력)"], req:true, cond:{on:"V3-2", op:"=", val:"예"}},
+    {id:"V_STAGE", type:"radio", text:"이 피해자는 가해자와의 관계에 있어 다음 중 어떤 상태에 가장 가까웠다고 보십니까?",
+      opts:["관계를 유지하는 데 전념하고 있었음 (문제로 인식하지 않거나 유지 의사가 확고함)","관계를 유지할지 고민하기 시작한 상태였음","관계에서 벗어나는 것을 적극적으로 고려하고 있었음","이미 관계에서 벗어났거나, 가해자가 실질적으로 폭력을 중단한 상태였음","가해자와 완전히 분리되어 새로운 생활을 시작한 상태였음","기타(자유 기입)"], req:true},
+    {id:"V2", type:"radio", text:"이 피해자가 가해자에 대해 보인 태도는 일관적이었습니까?", opts:["예, 일관적이었습니다.","아니오, 비일관적이었습니다."], req:true},
+    {id:"V2-1", type:"radio", text:"이 피해자가 가해자에 대해 보인 태도는 다음 중 어디에 가장 가까웠습니까?",
+      opts:["가해자에 대한 두려움이나 거부감이 뚜렷했음","두려움과 동정·애착이 함께 나타났음 (양가감정)","뚜렷한 부정적 감정 없이 관계를 지속하려는 태도를 보였음","가해자를 두둔하거나 옹호하는 모습을 보였음","감정을 드러내지 않았음/파악하기 어려웠음","기타(자유 기입)"],
+      req:true, cond:{on:"V2", op:"=", val:"아니오, 비일관적이었습니다."}},
   ]},
 
-{ id:"s2", title:"2. 피해자 — 욕구요인", color:"#C97B63", questions:[
-    {id:"V4_1", type:"radio", text:"이 피해자는 경제적으로 어려움을 겪고 있었습니까? (생활비 부족 등)", opts:GRID_OPTS, req:true},
-    {id:"V4_2", type:"radio", text:"이 피해자는 거주지가 불안정한 상태였습니까? (이사가 필요하거나 임시로 거주 중인 경우 등)", opts:GRID_OPTS, req:true},
-    {id:"V4_3", type:"radio", text:"이 피해자는 자녀 양육에 대한 부담을 겪고 있었습니까?", opts:GRID_OPTS, req:true},
-    {id:"V4_4", type:"radio", text:"이 피해자는 정신건강상의 어려움(우울감, 불안감 등)을 겪고 있었습니까?", opts:GRID_OPTS, req:true},
-    {id:"V4_5", type:"radio", text:"이 피해자에게는 도움을 요청할 수 있는 가족이나 지인 등 사회적 지지가 부족했습니까?", opts:GRID_OPTS, req:true},
-    {id:"V4_6", type:"radio", text:"이 피해자는 상담 지원을 필요로 했습니까?", opts:GRID_OPTS, req:true},
-    {id:"V4_7", type:"radio", text:"이 피해자는 의료 지원을 필요로 했습니까?", opts:GRID_OPTS, req:true},
-    {id:"V4_8", type:"radio", text:"이 피해자는 주거 지원을 필요로 했습니까?", opts:GRID_OPTS, req:true},
+{ id:"s2", kind:"form", title:"피해자 — 욕구요인", eyebrow:"2", color:"#C79574", questions:[
+    {id:"V4", type:"checkbox", text:"이 피해자에게 해당하는 욕구요인을 모두 선택해 주십시오.",
+      note:"* 욕구요인: 피해자가 안전과 회복을 위해 실제로 필요로 하는 지원이나 자원",
+      opts:["경제적 문제","주거불안","자녀양육 부담","정신건강 문제","사회적 지지 부족","상담 지원","의료 지원","법률 지원","주거 지원","기타(직접입력)"], req:true},
     {id:"V4_9", type:"radio", text:"위에서 다루지 않은 다른 어려움이나 필요한 지원이 있었습니까?", opts:["있음","없음"], req:true},
     {id:"V4_9-1", type:"textarea", text:"어떤 것이었습니까?", req:false, cond:{on:"V4_9", op:"=", val:"있음"}},
   ]},
 
-{ id:"s3", title:"3. 피해자 — 반응성요인", color:"#C97B63", questions:[
+{ id:"s3", kind:"form", title:"피해자 — 반응성요인", eyebrow:"3", color:"#C79574", questions:[
     {id:"V6", type:"radio", text:"이 피해자의 처벌 의사는 어떠했습니까?",
       opts:["처음부터 있었고 유지됨","있었으나 이후 약화됨","처음부터 없었음","없었으나 이후 강화됨","확인 불가"], req:true},
-    {id:"V7", type:"radio", text:"이 피해자는 모니터링(경찰 또는 상담소) 지속 의사가 있었습니까?", opts:["있음","없음","확인 불가"], req:true},
-    {id:"V8", type:"likert", text:"이 피해자는 가해자와의 분리를 얼마나 원했습니까?", labels:["전혀 원하지 않음","매우 원함"], req:true},
+    {id:"V7", type:"radio", text:"이 피해자는 모니터링(경찰 또는 상담소) 지속 의사가 있었습니까?", opts:["있음","없음","확인 불가"], req:true, role:"apo"},
+    {id:"V_RESP_GRID", type:"grid", text:"다음 각 항목에 대해 해당 정도를 표시해 주십시오.",
+      rowsLikert:[
+        {label:"가해자와의 분리를 원하는 정도", loLabel:"전혀 원하지 않음", hiLabel:"매우 원함"},
+        {label:"경찰의 개입·지원을 받아들이거나 활용한 정도", loLabel:"매우 소극적/거부", hiLabel:"매우 적극적"}
+      ], req:true},
     {id:"V9", type:"radio", text:"이 피해자는 가해자와의 관계 유지 의사가 있었습니까?", opts:["있음","없음","확인 불가"], req:true},
     {id:"V10", type:"checkbox", text:"그 이유를 모두 선택해 주십시오.", opts:["경제적 의존","자녀","주거 공유","간병","정서적 애착","기타(직접입력)"], req:true, cond:{on:"V9", op:"=", val:"있음"}},
-    {id:"V11", type:"likert", text:"이 피해자는 경찰의 개입이나 제안된 조치·지원을 얼마나 적극적으로 받아들이거나 활용했습니까?", labels:["매우 소극적/거부","매우 적극적"], req:true},
   ]},
 
-{ id:"s4", title:"4. 피해자 — 보호요인", color:"#C97B63", questions:[
+{ id:"s4", kind:"form", title:"피해자 — 보호요인", eyebrow:"4", color:"#C79574", questions:[
     {id:"V12", type:"checkbox", text:"이 피해자에게 해당하는 보호요인을 모두 선택해 주십시오.",
+      note:"* 보호요인: 피해자를 추가 피해로부터 실제로 지켜주는 요인",
       opts:["가해자와의 물리적 분리","보호명령·접근금지명령 준수","가족·지인의 실질적 지원","상담기관 연계 및 이용","해당사항 없음","기타(직접입력)"], req:true},
   ]},
 
-{ id:"s5", title:"5. 피해자 — 공포와 불안", color:"#C97B63", questions:[
-    {id:"V13", type:"radio", text:"이 피해자가 불안이나 두려움을 표현한 적이 있습니까?", opts:["있음","없음","확인 불가"], req:true},
+{ id:"s5", kind:"form", title:"피해자 — 공포와 불안", eyebrow:"5", color:"#C79574", questions:[
+    {id:"V13", type:"radio", text:"이 피해자가 공포, 불안이나 두려움을 표현한 적이 있습니까?", opts:["있음","없음","확인 불가"], req:true},
+    {id:"V13_SEV", type:"likert", text:"그 정도는 어느 정도로 심각했다고 보십니까?", labels:["경미한 수준","매우 심각한 수준"], req:true, cond:{on:"V13", op:"=", val:"있음"}},
     {id:"V14", type:"checkbox", text:"어떤 방식으로 표현되었습니까? 해당하는 것을 모두 선택해 주십시오.",
       opts:["특정 가해자에 대한 예측적 공포(재해코지 우려 표현)","특정 가해자에 대한 조건화된 공포반응(긴장·회피)","과각성(수면장애·과도한 놀람)","막연한 불안(대상 불특정)","신고·진술에 대한 위축","기타(직접입력)"], req:true, cond:{on:"V13", op:"=", val:"있음"}},
   ]},
 
-{ id:"s6", title:"6. 가해자 — 정보출처", color:"#3E6B9E", questions:[
+{ id:"s6", kind:"form", title:"가해자 — 정보출처 및 대면 인상", eyebrow:"6", color:"#6E85A3", questions:[
     {id:"G1", type:"checkbox", text:"가해자 관련 정보는 주로 어떤 경로로 파악하셨습니까?",
       opts:["피해자 진술","가해자 면담·조사","과거 신고·수사 기록","타 기관 정보공유","기타(직접입력)"], req:true},
     {id:"G2", type:"radio", text:"필요했지만 확인할 수 없었던 가해자 정보가 있었습니까?", opts:["있음","없음"], req:true},
     {id:"G2-1", type:"textarea", text:"어떤 정보였습니까?", req:false, cond:{on:"G2", op:"=", val:"있음"}},
+    {id:"INV_ADMIT", type:"radio", text:"조사 과정에서 이 가해자는 자신의 폭력 행동에 대해 다음 중 어떤 태도를 보였습니까?",
+      opts:["행동을 인정하지 않거나 정당화함(피해자 탓으로 돌림 등)","행동은 인정하되 심각성을 축소함","행동을 인정하고 후회·반성을 표현함","변화 의지를 보이거나 상담·치료 경험을 언급함","판단하기 어려움/조사에 응하지 않음"], req:true, role:"investigator"},
+    {id:"INV_DEMEANOR", type:"radio", text:"조사 시 이 가해자의 전반적인 태도(행동적 측면)는 어땠습니까?",
+      opts:["협조적","방어적","공격적","무감정/무반응","여러 태도가 혼재됨","확인 불가"], req:true, role:"investigator"},
   ]},
 
-{ id:"s7", title:"7. 가해자 — 결정문항 후보", color:"#3E6B9E", questions:[
+{ id:"s7", kind:"form", title:"가해자 — 결정문항 후보", eyebrow:"7", color:"#6E85A3", questions:[
     {id:"G_DECISION_GRID", type:"grid", text:"다음 각 항목이 이 사건에서 가해자에게 해당했는지, 항목별로 각각 표시해 주십시오.",
       rows:["이별 거부","흉기 사용","살해 협박","목조름","자살 시도·협박","보호조치 위반 이력"], opts:GRID_OPTS, req:true},
   ]},
 
-{ id:"s8", title:"8. 가해자 — 추가 위험요인", color:"#3E6B9E", questions:[
+{ id:"s8", kind:"form", title:"가해자 — 추가 위험요인", eyebrow:"8", color:"#6E85A3", questions:[
     {id:"G_ADDITIONAL_GRID", type:"grid", text:"다음 각 항목이 이 사건에서 가해자에게 해당했는지, 항목별로 각각 표시해 주십시오.",
       rows:["동일 피해자 대상 과거 폭력·신고 이력","타인 대상 폭력전과","평소 폭력적 성향","피해자 통제·고립 정황","집착·과도한 질투","이별-재결합 반복","실직·채무 등 경제적 문제","자기 행동 정당화·피해자 탓 태도"], opts:GRID_OPTS, req:true},
   ]},
 
-{ id:"s9", title:"9. 가해자 — 기타 위험요인 (초안)", color:"#C9A227",
+{ id:"s9", kind:"form", title:"가해자 — 기타 위험요인 (초안)", eyebrow:"9", color:"#C6A857",
   intro:"※ 아래 문항들은 문헌연구(DASH·B-SAFER·ODARA·SAM 등)를 참고한 임시 항목입니다.",
   questions:[
     {id:"G_OTHER_GRID", type:"grid", text:"다음 각 항목이 이 사건에서 가해자에게 해당했는지, 항목별로 각각 표시해 주십시오.",
       rows:["알코올·약물 남용 문제","정신질환 병력(공식 진단 여부와 무관)","흉기 외 무기 소지·접근 가능성","반려동물 등 동물에 대한 위해 이력","성장 과정 중 가정 내 폭력 목격·경험 이력(확인 가능한 경우)","이혼·별거 절차 진행 중"], opts:GRID_OPTS, req:true},
   ]},
 
-{ id:"s10", title:"10. 담당자 평가 (당시·현재 판단)", color:"#4E8B6B", questions:[
+{ id:"s10", kind:"form", title:"담당자 평가 (당시·현재 판단)", eyebrow:"10", color:"#7C9B78", questions:[
     {id:"J10", type:"likert", text:"이 사건은 위험성을 판단하기에 어느 정도로 어려웠습니까?", labels:["매우 쉬웠음","매우 어려웠음"], req:true},
     {id:"J1", type:"radio", text:"이 사건을 처음 접하셨을 당시, 이 피해자에게 어떤 모니터링 등급을 부여(또는 판단)하셨습니까?",
-      opts:["A등급(고위험)","B등급(중위험)","등급 없음","판단하지 않았음/기억나지 않음"], req:true},
-    {id:"J2", type:"likert", text:"그 당시 판단에 대해 얼마나 확신하셨습니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
+      opts:["A등급(고위험)","B등급(중위험)","등급 없음","판단하지 않았음/기억나지 않음"], req:true, role:"apo"},
+    {id:"J2", type:"likert", text:"그 당시 판단(J1)에 대해 얼마나 확신하셨습니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true, role:"apo"},
     {id:"J3", type:"likert", text:"그 당시, 가해자의 위험도는 어느 정도라고 생각하셨습니까?", labels:["매우 낮음","매우 높음"], req:true},
-    {id:"J4", type:"likert", text:"그 당시 가해자 위험도 판단에 대해 얼마나 확신하셨습니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
+    {id:"J4", type:"likert", text:"그 당시 가해자 위험도 판단(J3)에 대해 얼마나 확신하셨습니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
     {id:"J5", type:"likert", text:"이 피해자 본인은 스스로 위험을 어느 정도로 느끼고 있다고 보이셨습니까?", labels:["전혀 위험하게 느끼지 않음","매우 위험하게 느낌"], req:true},
     {id:"J6", type:"likert", text:"현재 시점에서 다시 판단할 때, 이 피해자의 모니터링 위험도는 어느 정도라고 생각하십니까?", labels:["매우 낮음","매우 높음"], req:true},
-    {id:"J7", type:"likert", text:"그 판단에 대해 얼마나 확신하십니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
+    {id:"J7", type:"likert", text:"그 판단(J6)에 대해 얼마나 확신하십니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
     {id:"J8", type:"likert", text:"현재 시점에서, 가해자의 위험성은 어느 정도라고 생각하십니까?", labels:["매우 낮음","매우 높음"], req:true},
-    {id:"J9", type:"likert", text:"그 판단에 대해 얼마나 확신하십니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
+    {id:"J9", type:"likert", text:"그 판단(J8)에 대해 얼마나 확신하십니까?", labels:["전혀 확신하지 못함","매우 확신함"], req:true},
     {id:"E2", type:"radio", text:"이 사건을 처음 접하셨을 때(최초 대응 시점)의 위험성 판단과, 이후 다시 보셨을 때의 위험성 판단에 차이가 있었습니까?",
       opts:["차이가 있었음","차이가 없었음","확인 불가/기억나지 않음"], req:true},
     {id:"E2-1", type:"textarea", text:"차이가 있었다면, 그 이유가 무엇이라고 생각하십니까?", req:false, cond:{on:"E2", op:"=", val:"차이가 있었음"}},
-    {id:"E3", type:"radio", text:"이 사건에 통합 판단조사표와 재발위험 평가척도가 모두 작성되었습니까?", opts:["둘 다 작성됨","하나만 작성됨","확인 불가"], req:true},
-    {id:"E4", type:"radio", text:"두 척도의 결과는 서로 일치했습니까?", opts:["일치함","일치하지 않음","확인 불가"], req:true, cond:{on:"E3", op:"=", val:"둘 다 작성됨"}},
-    {id:"E5", type:"checkbox", text:"어떤 이유였다고 보십니까?", opts:["평가 시점 차이","평가자(관점) 차이","그 사이 상황 변화","기타(직접입력)"], req:true, cond:{on:"E4", op:"=", val:"일치하지 않음"}},
+    {id:"E3", type:"radio", text:"이 사건에 통합 판단조사표와 재발위험 평가척도가 모두 작성되었습니까?", opts:["둘 다 작성됨","하나만 작성됨","확인 불가"], req:true, role:"apo"},
+    {id:"E4", type:"radio", text:"두 척도의 결과는 서로 일치했습니까?", opts:["일치함","일치하지 않음","확인 불가"], req:true, role:"apo", cond:{on:"E3", op:"=", val:"둘 다 작성됨"}},
+    {id:"E5", type:"checkbox", text:"어떤 이유였다고 보십니까?", opts:["평가 시점 차이","평가자(관점) 차이","그 사이 상황 변화","기타(직접입력)"], req:true, role:"apo", cond:{on:"E4", op:"=", val:"일치하지 않음"}},
     {id:"E6", type:"radio", text:"피해자에게 매겨진 모니터링 등급이 실제 위험 수준과 맞았다고 보십니까?",
       opts:["적절함(부합)","과소평가됨(실제보다 낮게 책정)","과대평가됨(실제보다 높게 책정)","판단하기 어려움"], req:true},
     {id:"E7", type:"likert", text:"가해자의 위험 수준과 피해자가 느끼거나 호소한 위험 수준을 비교하면 어느 정도 일치했다고 보십니까?", labels:["전혀 일치하지 않음","매우 일치함"], req:true},
     {id:"E8", type:"radio", text:"차이가 있었다면 어느 쪽이 더 높게 느껴졌습니까?",
       opts:["가해자의 객관적 위험이 더 높았음(피해자가 과소평가)","피해자가 체감한 위험이 더 높았음(객관적 위험은 상대적으로 낮음)","판단하기 어려움"], req:true, cond:{on:"E7", op:"<=", val:3}},
-    {id:"E11", type:"radio", text:"이 사건은 (실제 지정 여부와 관계없이) 집중 모니터링이 필요했다고 보십니까?", opts:["필요했음","불필요했음","판단하기 어려움"], req:true},
-    {id:"E9", type:"radio", text:"현재 척도 문항 중 이 사건에 특히 맞지 않거나 부족했던 문항이 있었습니까?", opts:["있음","없음"], req:true},
-    {id:"E9-1", type:"textarea", text:"어떤 문항이었습니까?", req:false, cond:{on:"E9", op:"=", val:"있음"}},
+    {id:"E11", type:"radio", text:"이 사건은 (실제 지정 여부와 관계없이) 집중 모니터링이 필요했다고 보십니까?", opts:["필요했음","불필요했음","판단하기 어려움"], req:true, role:"apo"},
+    {id:"E9", type:"radio", text:"현재 척도 문항 중 이 사건에 특히 맞지 않거나 부족했던 문항이 있었습니까?", opts:["있음","없음"], req:true, role:"apo"},
+    {id:"E9-1", type:"textarea", text:"어떤 문항이었습니까?", req:false, role:"apo", cond:{on:"E9", op:"=", val:"있음"}},
     {id:"E10", type:"textarea", text:"이 사건이 다른 사건들과 비교하여 두드러지는 차이가 있다면 무엇입니까? (선택 응답)", req:false},
   ]},
 
-{ id:"s11", title:"11. 모니터링 체계 전반", color:"#B98A2E",
+{ id:"s11", kind:"form", title:"재발 사건 평가", eyebrow:"11", color:"#C98A93", pageCaseType:"recur",
+  intro:"이 사건은 재발(재신고) 사례로 분류되어 있습니다. 지금부터는 최초 사건 이후 동일 가해자에 의해 재신고된 사건을 기준으로 응답해 주십시오.",
+  questions:[
+    {id:"RECUR_DECISION_GRID", type:"grid", text:"재신고된 사건에서는 다음 각 항목이 가해자에게 해당했습니까? 항목별로 각각 표시해 주십시오.",
+      rows:["이별 거부","흉기 사용","살해 협박","목조름","자살 시도·협박","보호조치 위반 이력"], opts:GRID_OPTS, req:true},
+    {id:"RECUR_NEW_FACTORS", type:"checkbox", text:"최초 사건과 비교했을 때, 재신고된 사건에서 새롭게 나타나거나 뚜렷해진 위험요인이 있었습니까?",
+      opts:["이별 거부","흉기 사용","살해 협박","목조름","자살 시도·협박","보호조치 위반 이력","동일 피해자 대상 과거 폭력·신고 이력 심화","타인 대상 폭력전과 확인","피해자 통제·고립 정황 심화","집착·과도한 질투 심화","경제적 문제 악화","알코올·약물 문제","피해자의 관계유지·분리 의사 변화","새롭게 나타난 요인 없음","기타(직접입력)"], req:true},
+    {id:"RECUR_SEVERITY_CHANGE", type:"radio", text:"최초 사건과 비교했을 때, 재신고된 사건의 전반적 위험성은 어떻게 변화했다고 보십니까?",
+      opts:["뚜렷하게 높아짐","다소 높아짐","비슷한 수준 유지","다소 낮아짐","뚜렷하게 낮아짐","판단하기 어려움"], req:true},
+    {id:"RECUR_WARNING", type:"radio", text:"재신고 이전에 위험성이 높아지고 있다는 조짐을 느끼신 적이 있었습니까?",
+      opts:["예, 뚜렷한 조짐이 있었음","예, 미묘한 조짐이 있었음","아니오, 전혀 예상하지 못했음","판단하기 어려움"], req:true},
+    {id:"RECUR_WARNING_1", type:"textarea", text:"어떤 조짐이었습니까?", req:false, cond:{on:"RECUR_WARNING", op:"starts", val:"예"}},
+    {id:"RECUR_MONITORING_CHANGE", type:"radio", text:"위험이 높아지는 동안(또는 재발 이전) 모니터링 강도나 등급이 실질적으로 강화되었다고 보십니까?",
+      opts:["예, 충분히 강화됨","예, 다소 강화됨","아니오, 변화 없었음","모니터링이 오히려 약화·중단됨","판단하기 어려움"], req:true, role:"apo"},
+    {id:"RECUR_SCALE_CAPTURE", type:"likert", text:"지금의 재발위험 평가척도나 절차로 이러한 위험성 변화 흐름을 미리 포착할 수 있었다고 보십니까?", labels:["전혀 포착할 수 없었음","충분히 포착 가능했음"], req:true, role:"apo"},
+    {id:"RECUR_REASON", type:"textarea", text:"이 사건에서 재발이 발생한 이유는 무엇이라고 생각하십니까? (가해자 요인·피해자 요인·제도적 요인 등 자유롭게, 선택 응답)", req:false},
+  ]},
+
+{ id:"s12", kind:"form", title:"모니터링 체계 전반", eyebrow:"12", color:"#B4915B", pageRole:"apo",
   intro:"지금부터는 특정 사건이 아니라, 귀하의 전반적인 실무 경험을 바탕으로 현행 제도 전반에 대한 의견을 여쭙겠습니다.",
   questions:[
     {id:"CM1", type:"likert", text:"현행 집중 모니터링 기준(예: 교제관계에서의 스토킹 사건, 신고 후 30일 이내 주 1회 등)이 실제 고위험 사건을 잘 포착하고 있다고 보십니까?", labels:["전혀 그렇지 않다","매우 그렇다"], req:true},
@@ -372,45 +432,38 @@ const SECTIONS = [
     {id:"CM3", type:"radio", text:"현행 집중 모니터링 기간(원칙 30일)이 적절하다고 보십니까?", opts:["적절함","더 길어야 함","더 짧아야 함","판단하기 어려움"], req:true},
   ]},
 
-{ id:"s12", title:"12. 위험요인 우선순위", color:"#7B5EA7",
+{ id:"s13", kind:"form", title:"위험요인 우선순위", eyebrow:"13", color:"#8E7BA3",
   intro:"이어지는 문항은 특정 사건이 아니라, 죄종 및 관계 유형에 따라 대응 시 우선적으로 고려해야 하는 위험요인이 달라지는지에 대한 귀하의 전반적인 의견을 여쭙는 것입니다.",
   questions:[
     {id:"RP2", type:"radio", text:"죄종(가정폭력·스토킹·교제폭력)에 따라 대응 시 우선적으로 고려해야 하는 위험요인이 다르다고 생각하십니까?",
       opts:["예(다르다고 생각함)","아니오(대체로 유사하다고 생각함)","판단하기 어려움"], req:true},
-
-    {id:"RP3_DV1", type:"rank", group:"RP3_DV", rankNo:1, text:"가정폭력 사건 — 우선적으로 고려해야 하는 위험요인 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_DV2", type:"rank", group:"RP3_DV", rankNo:2, text:"가정폭력 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_DV3", type:"rank", group:"RP3_DV", rankNo:3, text:"가정폭력 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-
-    {id:"RP3_ST1", type:"rank", group:"RP3_ST", rankNo:1, text:"스토킹 사건 — 우선적으로 고려해야 하는 위험요인 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_ST2", type:"rank", group:"RP3_ST", rankNo:2, text:"스토킹 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_ST3", type:"rank", group:"RP3_ST", rankNo:3, text:"스토킹 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-
-    {id:"RP3_DT1", type:"rank", group:"RP3_DT", rankNo:1, text:"교제폭력 사건 — 우선적으로 고려해야 하는 위험요인 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_DT2", type:"rank", group:"RP3_DT", rankNo:2, text:"교제폭력 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-    {id:"RP3_DT3", type:"rank", group:"RP3_DT", rankNo:3, text:"교제폭력 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
-
+    {id:"RP3_DV1", type:"rank", group:"RP3_DV", text:"가정폭력 사건 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_DV2", type:"rank", group:"RP3_DV", text:"가정폭력 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_DV3", type:"rank", group:"RP3_DV", text:"가정폭력 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_ST1", type:"rank", group:"RP3_ST", text:"스토킹 사건 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_ST2", type:"rank", group:"RP3_ST", text:"스토킹 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_ST3", type:"rank", group:"RP3_ST", text:"스토킹 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_DT1", type:"rank", group:"RP3_DT", text:"교제폭력 사건 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_DT2", type:"rank", group:"RP3_DT", text:"교제폭력 사건 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
+    {id:"RP3_DT3", type:"rank", group:"RP3_DT", text:"교제폭력 사건 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP2", op:"=", val:"예(다르다고 생각함)"}},
     {id:"RP4", type:"radio", text:"친밀관계의 지속 여부(현재 관계가 유지되고 있는지, 이미 종료되었는지)에 따라 우선적으로 고려해야 하는 위험요인이 다르다고 생각하십니까?",
       opts:["예","아니오","판단하기 어려움"], req:true},
-
-    {id:"RP5_cur1", type:"rank", group:"RP5_cur", rankNo:1, text:"관계가 현재 유지되고 있는 경우 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-    {id:"RP5_cur2", type:"rank", group:"RP5_cur", rankNo:2, text:"관계가 현재 유지되고 있는 경우 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-    {id:"RP5_cur3", type:"rank", group:"RP5_cur", rankNo:3, text:"관계가 현재 유지되고 있는 경우 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-
-    {id:"RP5_end1", type:"rank", group:"RP5_end", rankNo:1, text:"관계가 이미 종료된 경우 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-    {id:"RP5_end2", type:"rank", group:"RP5_end", rankNo:2, text:"관계가 이미 종료된 경우 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-    {id:"RP5_end3", type:"rank", group:"RP5_end", rankNo:3, text:"관계가 이미 종료된 경우 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
-
+    {id:"RP5_cur1", type:"rank", group:"RP5_cur", text:"관계 현재 유지 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
+    {id:"RP5_cur2", type:"rank", group:"RP5_cur", text:"관계 현재 유지 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
+    {id:"RP5_cur3", type:"rank", group:"RP5_cur", text:"관계 현재 유지 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
+    {id:"RP5_end1", type:"rank", group:"RP5_end", text:"관계 이미 종료 — 1순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
+    {id:"RP5_end2", type:"rank", group:"RP5_end", text:"관계 이미 종료 — 2순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
+    {id:"RP5_end3", type:"rank", group:"RP5_end", text:"관계 이미 종료 — 3순위", opts:RANK_POOL, req:true, cond:{on:"RP4", op:"=", val:"예"}},
     {id:"RP6", type:"textarea", text:"그 밖에 죄종이나 관계 유형에 따라 위험요인 판단이 달라진다고 생각되는 부분이 있다면 자유롭게 적어 주십시오. (선택 응답)", req:false},
   ]},
 
-{ id:"s13", title:"13. 척도 평가 및 개선의견", color:"#B9673F", questions:[
-    {id:"GS1", type:"likert", text:"현행 재발위험 평가척도(가정폭력)에 대한 전반적인 만족도는 어느 정도입니까?", labels:["매우 불만족","매우 만족"], req:true},
-    {id:"GS2", type:"likert", text:"현행 통합 판단조사표에 대한 전반적인 만족도는 어느 정도입니까?", labels:["매우 불만족","매우 만족"], req:true},
+{ id:"s14", kind:"form", title:"척도 평가 및 개선의견", eyebrow:"14", color:"#B97F5E", questions:[
+    {id:"GS1", type:"likert", text:"현행 재발위험 평가척도(가정폭력)에 대한 전반적인 만족도는 어느 정도입니까?", labels:["매우 불만족","매우 만족"], req:true, role:"apo"},
+    {id:"GS2", type:"likert", text:"현행 통합 판단조사표에 대한 전반적인 만족도는 어느 정도입니까?", labels:["매우 불만족","매우 만족"], req:true, role:"apo"},
     {id:"GS3", type:"textarea", text:"두 척도에 대해 개선이 필요하다고 생각하는 부분이 있다면 자유롭게 적어 주십시오. (선택 응답)", req:false},
   ]},
 
-{ id:"s14", title:"14. 응답자 특성", color:"#6B7280", questions:[
+{ id:"s15", kind:"form", title:"응답자 특성", eyebrow:"15", color:"#8C8577", questions:[
     {id:"D1", type:"radio", text:"총 근무연수는 어느 정도이십니까?", opts:["1년 미만","1~3년 미만","3~5년 미만","5~10년 미만","10~15년 미만","15년 이상"], req:true},
     {id:"D2", type:"radio", text:"가정폭력·스토킹·교제폭력 등 관계성범죄 담당 기간은 어느 정도이십니까?", opts:["1년 미만","1~3년 미만","3~5년 미만","5~10년 미만","10~15년 미만","15년 이상"], req:true},
     {id:"D3", type:"radio", text:"최근 1년간 담당하신 관계성범죄 사건은 대략 몇 건입니까?", opts:["10건 미만","10~30건 미만","30~50건 미만","50~100건 미만","100건 이상"], req:true},
@@ -420,58 +473,69 @@ const SECTIONS = [
     {id:"D7", type:"radio", text:"소속 관서", opts:["서울청","인천청","부산청","경기북부청","경기남부청","기타"], req:true},
   ]},
 
-{ id:"s15", title:"15. 마무리", color:"#1B3A5C", questions:[
+{ id:"s16", kind:"form", title:"마무리", eyebrow:"16", color:"#57697A", questions:[
     {id:"F1", type:"textarea", text:"오늘 다루지 않은 것 중 하시고 싶은 말씀이 있으시면 자유롭게 적어 주십시오. (선택 응답)", req:false},
   ]},
 ];
 
 /* =========================================================
-   3. URL 파라미터 (사전입력)
+   3. 상태
    ========================================================= */
-const qp = new URLSearchParams(location.search);
-const PREFILL = {
-  case: qp.get("case") || "",
-  crime: qp.get("crime") || "",
-  relation: qp.get("relation") || "",
-  officer: qp.get("officer") || "",
-};
+const answers = {};
+const PREFILL = { officer:"", crime:"", case:"", role:"apo", caseType:"single", caseDetail:null };
+let RAW_CODE = "";
+let pageIndex = 0;          // ACTIVE_PAGES 내 인덱스
+let ACTIVE_PAGES = [PAGES[0], PAGES[1], PAGES[2]]; // gate/consent/ready 는 항상 포함
+let isAnimating = false;
 
 /* =========================================================
-   4. 상태
+   4. 유틸
    ========================================================= */
-const answers = {}; // id -> value (string | string[])
-
-/* =========================================================
-   5. 렌더링
-   ========================================================= */
-const container = document.getElementById("sections-container");
-const caseCard = document.getElementById("case-card");
-
-function renderCaseCard(){
-  const items = [];
-  if(PREFILL.officer) items.push(["담당자", PREFILL.officer]);
-  items.push(["사건번호", PREFILL.case || "(하단에서 직접 입력)"]);
-  items.push(["죄종", PREFILL.crime || "(하단에서 선택)"]);
-  items.push(["관계", PREFILL.relation || "(하단에서 선택)"]);
-  caseCard.innerHTML = items.map(([k,v])=>{
-    const badge = v && !v.startsWith("(") ? '<span class="badge">사전입력</span>' : "";
-    return `<div class="item"><span class="k">${k}${badge}</span><span class="v">${escapeHtml(v)}</span></div>`;
-  }).join("");
-}
-
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
-function isOtherOpt(opt){ return opt.indexOf("(직접입력)") !== -1; }
-
+function isOtherOpt(opt){ return /\(직접입력\)|\(자유\s*기입\)|\(자유입력\)/.test(opt); }
 function otherKey(qid, opt){ return qid + "__other__" + opt; }
+function prefersReducedMotion(){
+  return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
+function parseCode(raw){
+  const s = String(raw||"").replace(/\s+/g, "");
+  if(!s) return null;
+  for(const crime of CRIME_TYPES){
+    const idx = s.indexOf(crime);
+    if(idx > 0){
+      const name = s.slice(0, idx);
+      const num = s.slice(idx + crime.length);
+      if(name && num) return { name, crime, num };
+    }
+  }
+  return null;
+}
+
+function jsonpRequest(url, params, timeoutMs){
+  return new Promise((resolve, reject) => {
+    const cbName = "jsonp_cb_" + Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    let done = false;
+    const timer = setTimeout(() => { if(done) return; done = true; cleanup(); reject(new Error("timeout")); }, timeoutMs || 9000);
+    function cleanup(){ delete window[cbName]; script.remove(); clearTimeout(timer); }
+    window[cbName] = (data) => { if(done) return; done = true; cleanup(); resolve(data); };
+    const qs = Object.keys(params).map(k => encodeURIComponent(k)+"="+encodeURIComponent(params[k])).join("&");
+    script.src = url + (url.indexOf("?")>-1?"&":"?") + qs + "&callback=" + cbName;
+    script.onerror = () => { if(done) return; done = true; cleanup(); reject(new Error("network")); };
+    document.body.appendChild(script);
+  });
+}
+
+/* =========================================================
+   5. 문항 렌더링
+   ========================================================= */
 function buildOptList(q, kind){
-  // kind: 'radio' | 'checkbox'
   const wrap = document.createElement("div");
   wrap.className = "opt-list";
-  q.opts.forEach((opt, i)=>{
+  q.opts.forEach(opt=>{
     const row = document.createElement("label");
     row.className = "opt";
     const input = document.createElement("input");
@@ -484,13 +548,11 @@ function buildOptList(q, kind){
     row.appendChild(input); row.appendChild(span);
     wrap.appendChild(row);
 
-    if(isOtherOpt(opt)){
+    if(!q.noAutoOther && isOtherOpt(opt)){
       const oi = document.createElement("input");
       oi.type = "text"; oi.className = "other-text"; oi.placeholder = "직접 입력해 주세요";
       oi.dataset.forOpt = opt;
-      oi.addEventListener("input", ()=>{
-        answers[otherKey(q.id, opt)] = oi.value;
-      });
+      oi.addEventListener("input", ()=>{ answers[otherKey(q.id, opt)] = oi.value; });
       wrap.appendChild(oi);
     }
   });
@@ -501,14 +563,9 @@ function onOptionChange(q, kind){
   const qEl = document.getElementById("card-"+q.id);
   const inputs = qEl.querySelectorAll('input[name="'+CSS.escape(q.id)+'"]');
   let val;
-  if(kind === "checkbox"){
-    val = Array.from(inputs).filter(i=>i.checked).map(i=>i.value);
-  } else {
-    const chk = Array.from(inputs).find(i=>i.checked);
-    val = chk ? chk.value : "";
-  }
+  if(kind === "checkbox"){ val = Array.from(inputs).filter(i=>i.checked).map(i=>i.value); }
+  else { const chk = Array.from(inputs).find(i=>i.checked); val = chk ? chk.value : ""; }
   answers[q.id] = val;
-  // toggle option 'checked' visual + other-text visibility
   Array.from(qEl.querySelectorAll(".opt")).forEach(optEl=>{
     const inp = optEl.querySelector("input");
     optEl.classList.toggle("checked", inp.checked);
@@ -518,9 +575,18 @@ function onOptionChange(q, kind){
     const isChecked = Array.from(inputs).some(i=>i.value===opt && i.checked);
     oi.classList.toggle("show", isChecked);
   });
+  if(q.blankPreview){
+    const prev = qEl.querySelector(".blank-preview");
+    if(prev){
+      if(kind !== "checkbox" && val){
+        const parts = q.blankPreview.split("{value}");
+        prev.innerHTML = escapeHtml(parts[0]) + "<b>" + escapeHtml(val) + "</b>" + escapeHtml(parts[1]||"");
+        prev.classList.add("show");
+      } else { prev.classList.remove("show"); }
+    }
+  }
   clearInvalid(q.id);
-  evaluateConditions();
-  updateProgress();
+  evaluateConditionsInPage();
 }
 
 function buildLikert(q){
@@ -532,7 +598,7 @@ function buildLikert(q){
     btn.addEventListener("click", ()=>{
       answers[q.id] = v;
       Array.from(row.children).forEach(c=>c.classList.toggle("checked", c===btn));
-      clearInvalid(q.id); evaluateConditions(); updateProgress();
+      clearInvalid(q.id); evaluateConditionsInPage();
     });
     row.appendChild(btn);
   });
@@ -546,6 +612,26 @@ function buildLikert(q){
 function buildGrid(q){
   const wrap = document.createElement("div"); wrap.className = "grid-wrap";
   const state = {};
+  if(q.rowsLikert){
+    q.rowsLikert.forEach(rowDef=>{
+      const rowEl = document.createElement("div"); rowEl.className = "grid-row";
+      const lab = document.createElement("div"); lab.className = "g-label"; lab.textContent = rowDef.label;
+      const opts = document.createElement("div"); opts.className = "g-opts";
+      LIKERT5.forEach(v=>{
+        const o = document.createElement("div"); o.className = "grid-opt"; o.textContent = v;
+        o.addEventListener("click", ()=>{
+          state[rowDef.label] = v;
+          Array.from(opts.children).forEach(c=>c.classList.toggle("checked", c===o));
+          answers[q.id] = Object.assign({}, state);
+          clearInvalid(q.id);
+        });
+        opts.appendChild(o);
+      });
+      rowEl.appendChild(lab); rowEl.appendChild(opts);
+      wrap.appendChild(rowEl);
+    });
+    return wrap;
+  }
   q.rows.forEach(rowLabel=>{
     const rowEl = document.createElement("div"); rowEl.className = "grid-row";
     const lab = document.createElement("div"); lab.className = "g-label"; lab.textContent = rowLabel;
@@ -556,7 +642,7 @@ function buildGrid(q){
         state[rowLabel] = opt;
         Array.from(opts.children).forEach(c=>c.classList.toggle("checked", c===o));
         answers[q.id] = Object.assign({}, state);
-        clearInvalid(q.id); updateProgress();
+        clearInvalid(q.id);
       });
       opts.appendChild(o);
     });
@@ -570,17 +656,9 @@ function buildRank(q){
   const wrap = document.createElement("div");
   const sel = document.createElement("select"); sel.className = "qi";
   const blank = document.createElement("option"); blank.value=""; blank.textContent="선택해 주세요"; sel.appendChild(blank);
-  q.opts.forEach(opt=>{
-    const o = document.createElement("option"); o.value = opt; o.textContent = opt; sel.appendChild(o);
-  });
-  sel.addEventListener("change", ()=>{
-    answers[q.id] = sel.value;
-    clearInvalid(q.id);
-    refreshRankGroup(q.group);
-    updateProgress();
-  });
-  sel.dataset.group = q.group;
-  sel.dataset.qid = q.id;
+  q.opts.forEach(opt=>{ const o = document.createElement("option"); o.value = opt; o.textContent = opt; sel.appendChild(o); });
+  sel.addEventListener("change", ()=>{ answers[q.id] = sel.value; clearInvalid(q.id); refreshRankGroup(q.group); });
+  sel.dataset.group = q.group; sel.dataset.qid = q.id;
   wrap.appendChild(sel);
   return wrap;
 }
@@ -591,28 +669,21 @@ function refreshRankGroup(group){
   selects.forEach(s=>{
     Array.from(s.options).forEach(o=>{
       if(!o.value) return;
-      const chosenBySibling = chosen.includes(o.value) && s.value !== o.value;
-      o.disabled = chosenBySibling;
+      o.disabled = chosen.includes(o.value) && s.value !== o.value;
     });
   });
 }
 
 function buildQuestionCard(q){
   const card = document.createElement("div");
-  card.className = "q" + (q.type==="info" ? " info" : "");
+  card.className = "q";
   card.id = "card-" + q.id;
   if(q.cond) card.dataset.cond = "1";
+  if(q.role) card.dataset.role = q.role;
 
-  if(q.type !== "info"){
-    const t = document.createElement("div"); t.className = "q-text";
-    t.innerHTML = escapeHtml(q.text) + (q.req ? '<span class="req">*</span>' : "");
-    card.appendChild(t);
-  } else {
-    const t = document.createElement("div"); t.className = "q-text"; t.textContent = q.text;
-    card.appendChild(t);
-    return card;
-  }
-
+  const t = document.createElement("div"); t.className = "q-text";
+  t.innerHTML = escapeHtml(q.text) + (q.req ? '<span class="req">*</span>' : "");
+  card.appendChild(t);
   if(q.note){ const n = document.createElement("div"); n.className="q-note"; n.textContent=q.note; card.appendChild(n); }
 
   let body;
@@ -621,169 +692,460 @@ function buildQuestionCard(q){
   else if(q.type === "grid") body = buildGrid(q);
   else if(q.type === "rank") body = buildRank(q);
   else if(q.type === "text"){
-    body = document.createElement("input");
-    body.type="text"; body.className="qi";
-    body.addEventListener("input", ()=>{ answers[q.id]=body.value; clearInvalid(q.id); updateProgress(); });
+    body = document.createElement("input"); body.type="text"; body.className="qi";
+    body.addEventListener("input", ()=>{ answers[q.id]=body.value; clearInvalid(q.id); });
   }
   else if(q.type === "textarea"){
     body = document.createElement("textarea"); body.className="qi";
-    body.addEventListener("input", ()=>{ answers[q.id]=body.value; clearInvalid(q.id); updateProgress(); });
+    body.addEventListener("input", ()=>{ answers[q.id]=body.value; clearInvalid(q.id); });
   }
   card.appendChild(body);
 
+  if(q.blankPreview){ const prev = document.createElement("div"); prev.className = "blank-preview"; card.appendChild(prev); }
+
   const err = document.createElement("div"); err.className="q-error"; err.textContent="이 문항에 응답해 주세요.";
   card.appendChild(err);
-
   return card;
 }
 
-function clearInvalid(qid){
-  const el = document.getElementById("card-"+qid);
-  if(el) el.classList.remove("invalid");
-}
+function clearInvalid(qid){ const el = document.getElementById("card-"+qid); if(el) el.classList.remove("invalid"); }
 
-/* build all sections */
-SECTIONS.forEach(sec=>{
-  const secEl = document.createElement("div"); secEl.className = "section"; secEl.id = "sec-"+sec.id;
-  secEl.style.setProperty("--sec-color", sec.color);
-  const head = document.createElement("div"); head.className = "section-head";
-  head.innerHTML = `<h2>${escapeHtml(sec.title)}</h2>`;
-  secEl.appendChild(head);
-  if(sec.intro){
-    const intro = document.createElement("div"); intro.className="section-intro"; intro.textContent = sec.intro;
-    secEl.appendChild(intro);
-  }
-  sec.questions.forEach(q=>{
-    secEl.appendChild(buildQuestionCard(q));
-  });
-  container.appendChild(secEl);
-});
-
-/* prefill B1/B2/B3 from URL params if provided */
-function applyPrefill(){
-  if(PREFILL.case){
-    const el = document.querySelector('#card-B1 input.qi'); if(el){ el.value = PREFILL.case; answers.B1 = PREFILL.case; }
-  }
-  if(PREFILL.crime){
-    const inp = document.querySelector('#card-B2 input[value="'+CSS.escape(PREFILL.crime)+'"]');
-    if(inp){ inp.checked = true; answers.B2 = PREFILL.crime; inp.closest(".opt").classList.add("checked"); }
-  }
-  if(PREFILL.relation){
-    const inp = document.querySelector('#card-B3 input[value="'+CSS.escape(PREFILL.relation)+'"]');
-    if(inp){ inp.checked = true; answers.B3 = PREFILL.relation; inp.closest(".opt").classList.add("checked"); }
-  }
-}
-
-/* =========================================================
-   6. 조건부 표시 로직
-   ========================================================= */
 function condMet(cond){
   const v = answers[cond.on];
   if(v === undefined || v === null || v === "") return false;
-  if(cond.op === "="){
-    if(Array.isArray(v)) return v.includes(cond.val);
-    return v === cond.val;
-  }
+  if(cond.op === "="){ if(Array.isArray(v)) return v.includes(cond.val); return v === cond.val; }
+  if(cond.op === "starts"){ return typeof v === "string" && v.indexOf(cond.val) === 0; }
   if(cond.op === "<="){ return Number(v) <= cond.val; }
   if(cond.op === ">="){ return Number(v) >= cond.val; }
   return false;
 }
 
-function evaluateConditions(){
-  document.querySelectorAll('.q[data-cond="1"]').forEach(el=>{
+function roleAllows(q){ return !q.role || q.role === PREFILL.role; }
+
+function evaluateConditionsInPage(){
+  document.querySelectorAll('.page.active .q[data-cond="1"]').forEach(el=>{
     const qid = el.id.replace("card-","");
     const q = findQuestion(qid);
-    const shouldShow = condMet(q.cond);
+    const shouldShow = condMet(q.cond) && roleAllows(q);
     const isHidden = el.classList.contains("hidden");
-    if(shouldShow && isHidden){
-      el.classList.remove("hidden"); el.classList.add("appear");
-    } else if(!shouldShow && !isHidden){
-      el.classList.add("hidden"); el.classList.remove("appear");
-      // 숨겨지면 값도 초기화 (제출 데이터 오염 방지)
-      delete answers[qid];
-    }
+    if(shouldShow && isHidden){ el.classList.remove("hidden"); }
+    else if(!shouldShow && !isHidden){ el.classList.add("hidden"); delete answers[qid]; }
   });
 }
 
 function findQuestion(qid){
-  for(const sec of SECTIONS){ for(const q of sec.questions){ if(q.id===qid) return q; } }
+  for(const p of PAGES){ if(!p.questions) continue; for(const q of p.questions){ if(q.id===qid) return q; } }
   return null;
 }
 
-function allQuestionsFlat(){
-  const out = [];
-  SECTIONS.forEach(sec=> sec.questions.forEach(q=> out.push(q)));
-  return out;
+/* =========================================================
+   6. 페이지 렌더링
+   ========================================================= */
+const pagesContainer = document.getElementById("pages-container");
+
+function svgIcon(name){
+  const icons = {
+    key:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"></circle><path d="M10.5 12.5L20 3M20 3h-4M20 3v4"></path></svg>',
+    doc:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 13h6M9 17h6"></path></svg>',
+  };
+  return icons[name] || "";
 }
 
-function isVisible(qid){
+function buildGatePage(page){
+  const el = document.createElement("div");
+  el.className = "hero-page";
+  el.innerHTML = `
+    <div class="icon-mark">${svgIcon('key')}</div>
+    <h2>코드를 입력해 주세요</h2>
+    <p>사전에 안내받으신 코드(성함+죄종+고유번호)를 입력하시면<br>배정된 사건으로 설문을 시작합니다.</p>
+  `;
+  const input = document.createElement("input");
+  input.type = "text"; input.className = "gate-input"; input.id = "gate-code-input";
+  input.placeholder = "예) 홍길동가정폭력125";
+  el.appendChild(input);
+  const example = document.createElement("div");
+  example.className = "gate-example";
+  example.textContent = "형식: 담당자성함 + 죄종 + 사건고유번호 (띄어쓰기 없이)";
+  el.appendChild(example);
+  const err = document.createElement("div"); err.className="gate-error"; err.id="gate-error";
+  el.appendChild(err);
+  return el;
+}
+
+function buildConsentPage(page){
+  const el = document.createElement("div");
+  el.innerHTML = `<div class="page-head"><h2>참여 동의</h2></div>`;
+  const box = document.createElement("div");
+  box.className = "consent-box";
+  box.textContent = page.consentText;
+  el.appendChild(box);
+  const q = {id:"__consent__", type:"radio", text:"", opts:["예, 동의합니다.","아니오"], req:true};
+  const card = document.createElement("div");
+  card.className = "q"; card.id = "card-__consent__";
+  card.appendChild(buildOptList(q, "radio"));
+  el.appendChild(card);
+  return el;
+}
+
+function kvRow(k, v){
+  if(v === undefined || v === null || v === "" ) return "";
+  return `<div class="kv"><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></div>`;
+}
+
+function fmtPerson(p){
+  if(!p) return "";
+  const meta = [];
+  if(p.gender) meta.push(p.gender);
+  if(p.age !== undefined && p.age !== null && p.age !== "") meta.push(p.age+"세");
+  const metaStr = meta.length ? " ("+meta.join(", ")+")" : "";
+  return (p.name || "") + metaStr;
+}
+
+function fmtBreakdown(obj){
+  if(!obj) return "";
+  const parts = [];
+  ["가정폭력","교제폭력","스토킹"].forEach(k=>{
+    if(obj[k] !== undefined && obj[k] !== null && obj[k] !== "") parts.push(k+" "+obj[k]+"건");
+  });
+  const totalPart = (obj.total !== undefined && obj.total !== null && obj.total !== "") ? ("총 "+obj.total+"건" + (parts.length? " · ":"")) : "";
+  return totalPart + parts.join(" · ");
+}
+
+function buildDossierHtml(cd){
+  if(!cd) return "";
+  if(cd.__parse_error__){
+    return `<div class="dossier-error">사건상세 정보 형식을 읽을 수 없습니다. 사건정보 시트의 JSON 형식을 확인해 주세요.</div>`;
+  }
+  let html = "";
+
+  const badgeParts = [cd.agency, cd.crimeType, cd.label].filter(Boolean);
+  if(badgeParts.length) html += `<div class="dossier-badge">${escapeHtml(badgeParts.join(" · "))}</div>`;
+
+  const apoStr = cd.apo ? [cd.apo.name, cd.apo.rank].filter(Boolean).join(" ") : "";
+  const detStr = cd.detective ? [cd.detective.name, cd.detective.rank].filter(Boolean).join(" ") : "";
+  const investRows = kvRow("APO", apoStr) + kvRow("수사관", detStr);
+  if(investRows) html += `<div class="dossier-section"><div class="dossier-section-title">조사자 정보</div><div class="kv-grid">${investRows}</div></div>`;
+
+  const basicRows = kvRow("신고접수일", cd.reportDate) + kvRow("사건번호", cd.caseNo)
+    + kvRow("피해자", fmtPerson(cd.victim)) + kvRow("가해자", fmtPerson(cd.offender))
+    + kvRow("죄종", cd.crimeType) + kvRow("가·피해자 관계", cd.relationship)
+    + kvRow("흉기 사용", cd.weaponUsed) + kvRow("쌍방 여부", cd.mutual)
+    + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent);
+  if(basicRows) html += `<div class="dossier-section"><div class="dossier-section-title">기본정보</div><div class="kv-grid">${basicRows}</div></div>`;
+
+  const protRows = kvRow("조치 내용", cd.protectionMeasures) + kvRow("시작일", cd.protectionStart) + kvRow("종료일", cd.protectionEnd);
+  if(protRows) html += `<div class="dossier-section"><div class="dossier-section-title">보호조치</div><div class="kv-grid">${protRows}</div></div>`;
+
+  const histRows = kvRow("과거 3년 사건접수", fmtBreakdown(cd.history3yr)) + kvRow("과거 1년 신고", fmtBreakdown(cd.history1yr));
+  if(histRows) html += `<div class="dossier-section"><div class="dossier-section-title">과거 전력</div><div class="kv-grid single">${histRows}</div></div>`;
+
+  const monRows = kvRow("공동모니터링", cd.jointMonitoring) + kvRow("사후콜백 시작", cd.callbackStart)
+    + kvRow("총 모니터링 횟수", (cd.monitoringCount!==undefined && cd.monitoringCount!=="") ? cd.monitoringCount+"회" : "")
+    + kvRow("해제일시", cd.monitoringEnd) + kvRow("해제사유", cd.monitoringEndReason);
+  if(monRows) html += `<div class="dossier-section"><div class="dossier-section-title">모니터링</div><div class="kv-grid">${monRows}</div></div>`;
+
+  const recurRows = kvRow("재신고 횟수", fmtBreakdown(cd.recurCount)) + kvRow("최초 재신고일", cd.firstRecurDate);
+  if(recurRows) html += `<div class="dossier-section"><div class="dossier-section-title">재신고</div><div class="kv-grid single">${recurRows}</div></div>`;
+
+  if(Array.isArray(cd.scales)){
+    cd.scales.forEach((scale, idx)=>{
+      if(!scale.items || !scale.items.length) return;
+      const scoreBadge = (scale.totalScore!==undefined && scale.totalScore!==null && scale.totalScore!=="")
+        ? `<span class="score-badge">총점 ${escapeHtml(scale.totalScore)}${scale.maxScore?(' / '+escapeHtml(scale.maxScore)):''}</span>` : "";
+      const toggleId = "scale-body-"+idx;
+      html += `<div class="scale-toggle" data-target="${toggleId}"><span>${escapeHtml(scale.name||"척도")}</span>${scoreBadge}</div>`;
+      html += `<div class="scale-body" id="${toggleId}"><table class="coding-table"><thead><tr><th>문항</th><th>점수</th></tr></thead><tbody>`;
+      scale.items.forEach(it=>{
+        const scoreDisplay = it.scoreLabel ? `${escapeHtml(it.scoreLabel)} (${escapeHtml(it.score)}점)` : escapeHtml(it.score !== undefined ? it.score : "");
+        html += `<tr><td>${escapeHtml(it.label||"")}</td><td class="score-col">${scoreDisplay}</td></tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+  }
+
+  return html;
+}
+
+function buildReadyPage(page){
+  const el = document.createElement("div");
+  el.className = "hero-page";
+  el.innerHTML = `<div class="icon-mark">${svgIcon('doc')}</div><h2>사건 확인</h2>`;
+  const wrap = document.createElement("div");
+  const dossierHtml = buildDossierHtml(PREFILL.caseDetail);
+  wrap.innerHTML = dossierHtml || `
+    <div class="ready-card">
+      <div class="row"><span class="k">담당자</span><span class="v">${escapeHtml(PREFILL.officer||"-")}</span></div>
+      <div class="row"><span class="k">죄종</span><span class="v">${escapeHtml(PREFILL.crime||"-")}</span></div>
+      <div class="row"><span class="k">사건 고유번호</span><span class="v">${escapeHtml(PREFILL.case||"-")}</span></div>
+    </div>`;
+  el.appendChild(wrap);
+  wrap.querySelectorAll(".scale-toggle").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const body = document.getElementById(btn.dataset.target);
+      if(body) body.classList.toggle("open");
+    });
+  });
+  const p = document.createElement("p");
+  p.textContent = page.reminder;
+  el.appendChild(p);
+  return el;
+}
+
+function buildFormPage(page){
+  const el = document.createElement("div");
+  const head = document.createElement("div"); head.className = "page-head";
+  head.style.setProperty("--sec-color", page.color);
+  head.innerHTML = `${page.eyebrow ? `<div class="page-eyebrow">Section ${escapeHtml(page.eyebrow)}</div>` : ""}<h2>${escapeHtml(page.title)}</h2>`;
+  el.appendChild(head);
+  if(page.intro){ const intro = document.createElement("div"); intro.className="page-intro"; intro.textContent = page.intro; el.appendChild(intro); }
+  page.questions.forEach(q=> el.appendChild(buildQuestionCard(q)));
+  return el;
+}
+
+function renderAllPages(){
+  PAGES.forEach((page, idx)=>{
+    const wrap = document.createElement("div");
+    wrap.className = "page";
+    wrap.id = "raw-page-" + idx;
+    let inner;
+    if(page.kind === "gate") inner = buildGatePage(page);
+    else if(page.kind === "consent") inner = buildConsentPage(page);
+    else if(page.kind === "ready") inner = buildReadyPage(page);
+    else inner = buildFormPage(page);
+    wrap.appendChild(inner);
+    pagesContainer.appendChild(wrap);
+  });
+}
+
+function refreshReadyPageContent(){
+  const idx = PAGES.findIndex(p=>p.kind==="ready");
+  if(idx<0) return;
+  const wrap = document.getElementById("raw-page-"+idx);
+  wrap.innerHTML = "";
+  wrap.appendChild(buildReadyPage(PAGES[idx]));
+}
+
+/* =========================================================
+   7. 활성 페이지 계산 (역할/사건유형 반영)
+   ========================================================= */
+function pageApplies(page){
+  if(page.pageRole && page.pageRole !== PREFILL.role) return false;
+  if(page.pageCaseType === "recur" && PREFILL.caseType !== "recur") return false;
+  return true;
+}
+
+function computeActivePages(){
+  const prefix = PAGES.slice(0,3); // gate, consent, ready
+  const rest = PAGES.slice(3).filter(pageApplies);
+  ACTIVE_PAGES = prefix.concat(rest);
+}
+
+function realIndexOf(page){ return PAGES.indexOf(page); }
+
+/* =========================================================
+   8. 네비게이션 (부드러운 전환 포함)
+   ========================================================= */
+const btnPrev = document.getElementById("btn-prev");
+const btnNext = document.getElementById("btn-next");
+const progressFill = document.getElementById("progress-fill");
+const progressTitle = document.getElementById("progress-title");
+const progressCount = document.getElementById("progress-count");
+const container = document.getElementById("pages-container");
+
+function currentPage(){ return ACTIVE_PAGES[pageIndex]; }
+function currentPageEl(){ return document.getElementById("raw-page-" + realIndexOf(currentPage())); }
+
+function goTo(newIdx, animate){
+  if(isAnimating) return;
+  const dir = newIdx > pageIndex ? 1 : -1;
+  const oldPage = ACTIVE_PAGES[pageIndex];
+  const newPage = ACTIVE_PAGES[newIdx];
+  const oldEl = document.getElementById("raw-page-"+realIndexOf(oldPage));
+  const newEl = document.getElementById("raw-page-"+realIndexOf(newPage));
+
+  const finish = () => {
+    pageIndex = newIdx;
+    evaluateConditionsInPage();
+    updateNavUI();
+    if(window.scrollTo) window.scrollTo({top:0, behavior: prefersReducedMotion() ? "auto" : "smooth"});
+  };
+
+  if(!animate || prefersReducedMotion() || !oldEl){
+    if(oldEl) oldEl.classList.remove("active");
+    newEl.classList.add("active");
+    finish();
+    return;
+  }
+
+  isAnimating = true;
+  const oldHeight = oldEl.offsetHeight;
+  container.style.height = oldHeight + "px";
+  container.classList.add("transitioning");
+
+  newEl.classList.add("active", "incoming");
+  newEl.style.transform = "translateX(" + (dir>0? "16px" : "-16px") + ")";
+  newEl.style.opacity = "0";
+  void newEl.offsetWidth; // reflow
+
+  const dur = "360ms";
+  const ease = "cubic-bezier(.4,0,.2,1)";
+  oldEl.style.transition = "transform "+dur+" "+ease+", opacity "+dur+" ease";
+  newEl.style.transition = "transform "+dur+" "+ease+", opacity "+dur+" ease";
+  oldEl.style.transform = "translateX(" + (dir>0? "-16px" : "16px") + ")";
+  oldEl.style.opacity = "0";
+  newEl.style.transform = "translateX(0)";
+  newEl.style.opacity = "1";
+
+  setTimeout(()=>{
+    oldEl.classList.remove("active");
+    oldEl.style.cssText = "";
+    newEl.classList.remove("incoming");
+    newEl.style.cssText = "";
+    container.classList.remove("transitioning");
+    container.style.height = "auto";
+    isAnimating = false;
+    finish();
+  }, 380);
+}
+
+function updateNavUI(){
+  const total = ACTIVE_PAGES.length;
+  const page = currentPage();
+  progressFill.style.width = Math.round(((pageIndex+1)/total)*100) + "%";
+  progressCount.textContent = (pageIndex+1) + " / " + total;
+  progressTitle.textContent = page.kind === "form" ? page.title : (page.kind === "gate" ? "시작하기" : page.kind === "consent" ? "참여 동의" : "사건 확인");
+  btnPrev.disabled = (pageIndex === 0);
+  const isLast = (pageIndex === total-1);
+  if(page.kind === "gate"){ btnNext.textContent = "다음"; btnPrev.disabled = true; }
+  else if(page.kind === "ready"){ btnNext.textContent = "네, 설문에 참여하겠습니다"; }
+  else if(isLast){ btnNext.textContent = "제출하기"; }
+  else { btnNext.textContent = "다음"; }
+}
+
+function currentPageRequiredQuestions(){
+  const page = currentPage();
+  if(!page.questions) return [];
+  return page.questions.filter(q => q.req && roleAllows(q) && isVisibleInDom(q.id));
+}
+function isVisibleInDom(qid){
   const el = document.getElementById("card-"+qid);
   return el && !el.classList.contains("hidden");
 }
 
-/* =========================================================
-   7. 진행률
-   ========================================================= */
-function updateProgress(){
-  const all = allQuestionsFlat().filter(q=> q.type!=="info" && q.req && isVisible(q.id));
-  const total = all.length;
-  const done = all.filter(q=>{
-    const v = answers[q.id];
-    if(Array.isArray(v)) return v.length>0;
-    if(v && typeof v === "object") return Object.keys(v).length === (findQuestion(q.id).rows||[]).length;
-    return v !== undefined && v !== null && String(v).trim() !== "";
-  }).length;
-  const pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById("progress-fill").style.width = pct+"%";
-  document.getElementById("progress-label").textContent = pct+"% (" + done + "/" + total + ")";
-}
-
-/* =========================================================
-   8. 제출
-   ========================================================= */
-document.getElementById("submit-btn").addEventListener("click", onSubmit);
-
-function onSubmit(){
-  const required = allQuestionsFlat().filter(q=> q.type!=="info" && q.req && isVisible(q.id));
+function validateCurrentFormPage(){
+  const required = currentPageRequiredQuestions();
   let firstInvalid = null;
   required.forEach(q=>{
     const v = answers[q.id];
     let ok;
     if(q.type === "grid"){
-      ok = v && typeof v === "object" && Object.keys(v).length === q.rows.length;
-    } else if(Array.isArray(v)){
-      ok = v.length > 0;
-    } else {
-      ok = v !== undefined && v !== null && String(v).trim() !== "";
-    }
+      const need = q.rows ? q.rows.length : (q.rowsLikert ? q.rowsLikert.length : 0);
+      ok = v && typeof v === "object" && Object.keys(v).length === need;
+    } else if(Array.isArray(v)) ok = v.length > 0;
+    else ok = v !== undefined && v !== null && String(v).trim() !== "";
     const card = document.getElementById("card-"+q.id);
-    if(!ok){
-      card.classList.add("invalid");
-      if(!firstInvalid) firstInvalid = card;
-    } else {
-      card.classList.remove("invalid");
-    }
+    if(!ok){ card.classList.add("invalid"); if(!firstInvalid) firstInvalid = card; }
+    else card.classList.remove("invalid");
   });
+  if(firstInvalid){ if(firstInvalid.scrollIntoView) firstInvalid.scrollIntoView({behavior:"smooth", block:"center"}); return false; }
+  return true;
+}
 
-  if(firstInvalid){
-    firstInvalid.scrollIntoView({behavior:"smooth", block:"center"});
+async function onNextClick(){
+  if(isAnimating) return;
+  const page = currentPage();
+
+  if(page.kind === "gate"){ await handleGateNext(); return; }
+
+  if(page.kind === "consent"){
+    const chosen = answers["__consent__"];
+    if(!chosen){ document.getElementById("card-__consent__").classList.add("invalid"); return; }
+    if(chosen === "아니오"){
+      document.getElementById("main").style.display = "none";
+      document.getElementById("progress-wrap").style.display = "none";
+      document.getElementById("page-nav").style.display = "none";
+      document.getElementById("declined").style.display = "block";
+      return;
+    }
+    goTo(pageIndex+1, true);
     return;
   }
 
-  submitToBackend();
+  if(page.kind === "ready"){ goTo(pageIndex+1, true); return; }
+
+  if(!validateCurrentFormPage()) return;
+  const isLast = (pageIndex === ACTIVE_PAGES.length-1);
+  if(isLast){ submitToBackend(); return; }
+  goTo(pageIndex+1, true);
 }
 
+function onPrevClick(){
+  if(isAnimating || pageIndex === 0) return;
+  goTo(pageIndex-1, true);
+}
+
+btnNext.addEventListener("click", onNextClick);
+btnPrev.addEventListener("click", onPrevClick);
+
+/* ---- gate 처리 ---- */
+async function handleGateNext(){
+  const input = document.getElementById("gate-code-input");
+  const errEl = document.getElementById("gate-error");
+  errEl.classList.remove("show");
+
+  const raw = input.value.trim();
+  const parsed = parseCode(raw);
+  if(!parsed){
+    errEl.textContent = "코드 형식을 확인해 주세요. 예) 홍길동가정폭력125";
+    errEl.classList.add("show");
+    return;
+  }
+
+  btnNext.disabled = true;
+  btnNext.innerHTML = '<span class="spinner"></span>확인 중...';
+
+  try{
+    const res = await jsonpRequest(CONFIG.SUBMIT_URL, {code: raw});
+    btnNext.disabled = false;
+    if(res && res.found){
+      PREFILL.officer = parsed.name;
+      PREFILL.crime = parsed.crime;
+      PREFILL.case = parsed.num;
+      PREFILL.caseDetail = res.caseDetail || null;
+      PREFILL.role = (res.role === "수사관") ? "investigator" : "apo";
+      PREFILL.caseType = (res.caseType === "재발") ? "recur" : "single";
+      RAW_CODE = raw;
+      computeActivePages();
+      refreshReadyPageContent();
+      goTo(pageIndex+1, true);
+    } else {
+      errEl.textContent = "등록된 코드를 찾을 수 없습니다. 코드를 다시 확인해 주세요.";
+      errEl.classList.add("show");
+      updateNavUI();
+    }
+  } catch(err){
+    btnNext.disabled = false;
+    errEl.textContent = "확인 중 오류가 발생했습니다. 인터넷 연결을 확인하시고 다시 시도해 주세요.";
+    errEl.classList.add("show");
+    updateNavUI();
+  }
+}
+
+/* =========================================================
+   9. 제출
+   ========================================================= */
 function submitToBackend(){
-  const btn = document.getElementById("submit-btn");
-  btn.disabled = true; btn.textContent = "제출 중...";
+  btnNext.disabled = true;
+  btnNext.innerHTML = '<span class="spinner"></span>제출 중...';
+  btnPrev.style.visibility = "hidden";
 
   const form = document.getElementById("hidden-post-form");
   form.innerHTML = "";
   form.action = CONFIG.SUBMIT_URL;
 
   const payload = Object.assign({}, answers, {
-    _case: PREFILL.case, _crime: PREFILL.crime, _relation: PREFILL.relation,
-    _officer: PREFILL.officer, _submitted_at: new Date().toISOString()
+    _code: RAW_CODE, _officer: PREFILL.officer, _crime: PREFILL.crime, _case: PREFILL.case,
+    _role: PREFILL.role, _caseType: PREFILL.caseType, _submitted_at: new Date().toISOString()
   });
 
   Object.keys(payload).forEach(k=>{
@@ -797,26 +1159,37 @@ function submitToBackend(){
   const iframe = document.querySelector('iframe[name="hidden_submit_target"]');
   iframe.addEventListener("load", showThankYou, {once:true});
   form.submit();
-  // 백업: 3초 내 iframe load 이벤트가 안 잡혀도 완료 화면 표시
   setTimeout(showThankYou, 3000);
 }
 
 let thankShown = false;
 function showThankYou(){
   if(thankShown) return; thankShown = true;
-  document.querySelector("main").style.display = "none";
+  document.getElementById("main").style.display = "none";
   document.getElementById("progress-wrap").style.display = "none";
+  document.getElementById("page-nav").style.display = "none";
   document.getElementById("thankyou").style.display = "block";
-  window.scrollTo({top:0, behavior:"smooth"});
+  if(window.scrollTo) window.scrollTo({top:0, behavior:"smooth"});
 }
 
 /* =========================================================
-   9. 초기화
+   10. 초기화
    ========================================================= */
-renderCaseCard();
-applyPrefill();
-evaluateConditions();
-updateProgress();
+renderAllPages();
+document.getElementById("raw-page-0").classList.add("active");
+updateNavUI();
+
+/* 자동화 테스트 전용 전역 노출 (사이트 동작에는 영향 없음) */
+window.PAGES = PAGES;
+window.PREFILL = PREFILL;
+window.answers = answers;
+window.parseCode = parseCode;
+window.goTo = goTo;
+window.computeActivePages = computeActivePages;
+window.refreshReadyPageContent = refreshReadyPageContent;
+window.ACTIVE_PAGES = ACTIVE_PAGES;
+window.getPageIndex = () => pageIndex;
+window.getActivePages = () => ACTIVE_PAGES;
 </script>
 </body>
 </html>
