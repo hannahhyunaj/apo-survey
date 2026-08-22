@@ -82,7 +82,8 @@ main{ max-width:660px; margin:0 auto; padding:10px 20px 20px; min-height:56vh; p
 .page-eyebrow{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sec-color, var(--accent-deep)); margin-bottom:5px; }
 .page-head{ margin:16px 0 16px; }
 .page-head h2{ font-size:18px; margin:0; color:var(--ink); font-weight:800; letter-spacing:-.01em; }
-.page-intro{ background:var(--card-soft); border-radius:var(--radius-md); padding:14px 17px; font-size:13.6px; color:var(--ink-soft); margin-bottom:16px; border:1px solid var(--line-soft); }
+.page-intro{ background:var(--card-soft); border-radius:var(--radius-md); padding:14px 17px; font-size:13.6px; color:var(--ink-soft); margin-bottom:16px; border:1px solid var(--line-soft); white-space:pre-line; }
+.banner-card{ background:var(--card-soft); border:1px solid var(--line-soft); box-shadow:none; font-size:13.6px; color:var(--ink-soft); }
 
 /* ---------- question card ---------- */
 .q{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 18px 15px; margin-bottom:13px; box-shadow:var(--shadow-soft); }
@@ -109,12 +110,14 @@ input[type=text].qi:focus, textarea.qi:focus, select.qi:focus{ outline:2px solid
 .likert-row{ display:flex; gap:7px; justify-content:space-between; }
 .likert-btn{ flex:1; text-align:center; padding:11px 4px; border:1px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; font-weight:700; font-size:14px; color:var(--ink-soft); background:var(--card-soft); }
 .likert-btn.checked{ background:var(--primary); color:#fff; border-color:var(--primary); }
-.likert-labels{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-faint); margin-top:7px; }
+.likert-labels{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.likert-na-btn{ margin-top:8px; text-align:center; padding:10px 4px; border:1px dashed var(--line); border-radius:var(--radius-sm); cursor:pointer; font-size:13px; color:var(--ink-soft); background:var(--card-soft); }
+.likert-na-btn.checked{ background:var(--primary); color:#fff; border-color:var(--primary); border-style:solid; }
 
 .grid-wrap{ display:flex; flex-direction:column; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden; }
 .grid-row{ display:flex; flex-direction:column; padding:12px 14px; border-bottom:1px solid var(--line-soft); background:var(--card); }
 .grid-row:last-child{ border-bottom:none; }
-.grid-row .g-label{ font-size:13.5px; font-weight:600; margin-bottom:9px; }
+.grid-row .g-label{ font-size:13.5px; font-weight:600; margin-bottom:9px; letter-spacing:-0.03em; word-break:keep-all; }
 .grid-row .g-opts{ display:flex; gap:8px; }
 .grid-opt{ flex:1; text-align:center; padding:9px 4px; border:1px solid var(--line); border-radius:var(--radius-sm); cursor:pointer; font-size:13px; background:var(--card-soft); }
 .grid-opt.checked{ background:var(--primary); color:#fff; border-color:var(--primary); }
@@ -396,6 +399,10 @@ function onOptionChange(q, kind){
 
 function buildLikert(q){
   const wrap = document.createElement("div");
+  const lab = document.createElement("div"); lab.className = "likert-labels";
+  lab.innerHTML = `<span>${escapeHtml(q.labels[0])}</span><span>${escapeHtml(q.labels[1])}</span>`;
+  wrap.appendChild(lab);
+
   const row = document.createElement("div"); row.className = "likert-row";
   LIKERT5.forEach(v=>{
     const btn = document.createElement("div");
@@ -403,14 +410,26 @@ function buildLikert(q){
     btn.addEventListener("click", ()=>{
       answers[q.id] = v;
       Array.from(row.children).forEach(c=>c.classList.toggle("checked", c===btn));
+      if(naBtn) naBtn.classList.remove("checked");
       clearInvalid(q.id); evaluateConditionsInPage();
     });
     row.appendChild(btn);
   });
   wrap.appendChild(row);
-  const lab = document.createElement("div"); lab.className = "likert-labels";
-  lab.innerHTML = `<span>${escapeHtml(q.labels[0])}</span><span>${escapeHtml(q.labels[1])}</span>`;
-  wrap.appendChild(lab);
+
+  let naBtn = null;
+  if(q.naOption){
+    naBtn = document.createElement("div");
+    naBtn.className = "likert-na-btn";
+    naBtn.textContent = q.naOption;
+    naBtn.addEventListener("click", ()=>{
+      answers[q.id] = "__NA__";
+      Array.from(row.children).forEach(c=>c.classList.remove("checked"));
+      naBtn.classList.add("checked");
+      clearInvalid(q.id); evaluateConditionsInPage();
+    });
+    wrap.appendChild(naBtn);
+  }
   return wrap;
 }
 
@@ -502,6 +521,14 @@ function interpolateText(text){
 }
 
 function buildQuestionCard(q){
+  if(q.type === "banner"){
+    const card = document.createElement("div");
+    card.className = "q banner-card";
+    card.id = "card-" + q.id;
+    card.textContent = interpolateText(q.text);
+    return card;
+  }
+
   const card = document.createElement("div");
   card.className = "q";
   card.id = "card-" + q.id;
@@ -541,6 +568,7 @@ function condMet(cond){
   const v = answers[cond.on];
   if(v === undefined || v === null || v === "") return false;
   if(cond.op === "="){ if(Array.isArray(v)) return v.includes(cond.val); return v === cond.val; }
+  if(cond.op === "!="){ return v !== cond.val; }
   if(cond.op === "starts"){ return typeof v === "string" && v.indexOf(cond.val) === 0; }
   if(cond.op === "<="){ return Number(v) <= cond.val; }
   if(cond.op === ">="){ return Number(v) >= cond.val; }
@@ -622,11 +650,11 @@ function kvRow(k, v){
 
 function fmtPerson(p){
   if(!p) return "";
-  const meta = [];
-  if(p.gender) meta.push(p.gender);
-  if(p.age !== undefined && p.age !== null && p.age !== "") meta.push(p.age+"세");
-  const metaStr = meta.length ? " ("+meta.join(", ")+")" : "";
-  return (p.name || "") + metaStr;
+  const parts = [];
+  if(p.name) parts.push(p.name);
+  if(p.gender) parts.push(p.gender);
+  if(p.age !== undefined && p.age !== null && p.age !== "") parts.push(p.age+"세");
+  return parts.join(", ");
 }
 
 function fmtBreakdown(obj){
