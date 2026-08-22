@@ -544,6 +544,7 @@ function condMet(cond){
   if(cond.op === "starts"){ return typeof v === "string" && v.indexOf(cond.val) === 0; }
   if(cond.op === "<="){ return Number(v) <= cond.val; }
   if(cond.op === ">="){ return Number(v) >= cond.val; }
+  if(cond.op === "in"){ return Array.isArray(cond.val) && cond.val.includes(v); }
   return false;
 }
 
@@ -665,6 +666,10 @@ function buildDossierHtml(cd){
 
   const recurRows = kvRow("재신고 횟수", fmtBreakdown(cd.recurCount)) + kvRow("최초 재신고일", cd.firstRecurDate);
   if(recurRows) html += `<div class="dossier-section"><div class="dossier-section-title">재신고</div><div class="kv-grid single">${recurRows}</div></div>`;
+
+  if(cd.specialNotes){
+    html += `<div class="dossier-section"><div class="dossier-section-title">특이사항</div><div class="ready-summary">${escapeHtml(cd.specialNotes)}</div></div>`;
+  }
 
   if(Array.isArray(cd.scales)){
     cd.scales.forEach((scale, idx)=>{
