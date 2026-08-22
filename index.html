@@ -175,6 +175,7 @@ select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-r
 .coding-table th{ background:var(--card-soft); color:var(--ink-soft); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; }
 .coding-table tr:last-child td{ border-bottom:none; }
 .coding-table td.score-col{ text-align:right; font-weight:700; color:var(--primary-deep); width:90px; }
+.item-subinfo{ font-size:11.5px; color:var(--ink-faint); margin-top:3px; }
 .dossier-error{ font-size:12px; color:var(--error); background:var(--error-soft); border-radius:var(--radius-sm); padding:10px 13px; margin-bottom:12px; }
 
 .spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; margin-right:7px; }
@@ -704,12 +705,15 @@ function buildDossierHtml(cd){
     cd.scales.forEach((scale, idx)=>{
       if(!scale.items || !scale.items.length) return;
 
-      const hasTotalScore = scale.totalScore !== undefined
-        && scale.totalScore !== null
-        && String(scale.totalScore).trim() !== "";
+      const displayTotal = scale.totalScore !== undefined && scale.totalScore !== null && String(scale.totalScore).trim() !== ""
+        ? scale.totalScore
+        : scale.sourceTotalScore;
+      const hasTotalScore = displayTotal !== undefined
+        && displayTotal !== null
+        && String(displayTotal).trim() !== "";
 
       const scoreBadge = hasTotalScore
-        ? `<span class="score-badge">총점 ${escapeHtml(scale.totalScore)}${scale.maxScore ? (' / '+escapeHtml(scale.maxScore)) : ''}</span>`
+        ? `<span class="score-badge">총점 ${escapeHtml(displayTotal)}${scale.maxScore ? (' / '+escapeHtml(scale.maxScore)) : ''}</span>`
         : `<span class="score-badge">미작성</span>`;
 
       const toggleId = "scale-body-"+idx;
@@ -717,7 +721,8 @@ function buildDossierHtml(cd){
       html += `<div class="scale-body" id="${toggleId}"><table class="coding-table"><thead><tr><th>문항</th><th>점수</th></tr></thead><tbody>`;
       scale.items.forEach(it=>{
         const scoreDisplay = it.scoreLabel ? `${escapeHtml(it.scoreLabel)} (${escapeHtml(it.score)}점)` : escapeHtml(it.score !== undefined ? it.score : "");
-        html += `<tr><td>${escapeHtml(it.label||"")}</td><td class="score-col">${scoreDisplay}</td></tr>`;
+        const addInfo = it.additionalInfo ? `<div class="item-subinfo">${escapeHtml(it.additionalInfo)}</div>` : "";
+        html += `<tr><td>${escapeHtml(it.label||"")}${addInfo}</td><td class="score-col">${scoreDisplay}</td></tr>`;
       });
       html += `</tbody></table></div>`;
     });
@@ -865,14 +870,26 @@ function renderAllPages(){
 
 /* 코드 확인 후, 사건상세의 surveySet 값이 대체 문항 세트를 가리키면
    기존 4개 구조 페이지(gate/consent/reminder/ready)는 그대로 두고
-   'form' 종류 페이지만 통째로 교체해서 다시 그린다. */
+   'form' 종류 페이지만 통째로 교체해서 다시 그린다.
+   대체 세트 파일은 문항 내용을 직접 담지 않고 ID만 참조하며(questionIds),
+   실제 문항 내용은 MAIN_QUESTION_MAP(최초 로드한 survey-data.json)에서 가져온다.
+   -> 공통 문항 문구는 survey-data.json 한 곳만 고치면 양쪽에 자동 반영됨. */
 async function swapToAlternateSurvey(url){
   try{
     const res = await fetch(url);
     if(!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
-    const altFormPages = data.pages.filter(p => p.kind === "form");
-    resolveOptionPools(altFormPages, data.optionPools || {});
+
+    const altFormPages = data.pages.map(p=>{
+      const questions = p.questionIds.map(id=>{
+        const q = MAIN_QUESTION_MAP[id];
+        if(!q) console.error("대체 문항 세트가 참조하는 ID를 메인 문항에서 찾을 수 없음:", id);
+        return q;
+      }).filter(Boolean);
+      const page = { id:p.id, kind:"form", title:p.title, eyebrow:p.eyebrow, color:p.color, questions };
+      if(p.intro) page.intro = p.intro;
+      return page;
+    });
 
     const structuralPages = PAGES.slice(0, 4);
     PAGES = structuralPages.concat(altFormPages);
