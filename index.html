@@ -274,6 +274,7 @@ const LIKERT5 = ["1","2","3","4","5"];
 const CRIME_TYPES = ["가정폭력","스토킹","교제폭력"];
 
 const SURVEY_DATA_URL = "survey-data.json";
+const ALT_SURVEY_DATA_URL = "survey-data-recur-investigator.json";
 
 function resolveOptionPools(pages, pools){
   pages.forEach(page=>{
@@ -862,6 +863,36 @@ function renderAllPages(){
   });
 }
 
+/* 코드 확인 후, 사건상세의 surveySet 값이 대체 문항 세트를 가리키면
+   기존 4개 구조 페이지(gate/consent/reminder/ready)는 그대로 두고
+   'form' 종류 페이지만 통째로 교체해서 다시 그린다. */
+async function swapToAlternateSurvey(url){
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const altFormPages = data.pages.filter(p => p.kind === "form");
+    resolveOptionPools(altFormPages, data.optionPools || {});
+
+    const structuralPages = PAGES.slice(0, 4);
+    PAGES = structuralPages.concat(altFormPages);
+
+    Array.from(pagesContainer.querySelectorAll(".page")).forEach((el, idx)=>{
+      if(idx >= 4) el.remove();
+    });
+    altFormPages.forEach((page, i)=>{
+      const idx = 4 + i;
+      const wrap = document.createElement("div");
+      wrap.className = "page";
+      wrap.id = "raw-page-" + idx;
+      wrap.appendChild(buildFormPage(page));
+      pagesContainer.appendChild(wrap);
+    });
+  } catch(err){
+    console.error("대체 문항 세트 로드 실패, 기본 문항으로 진행합니다:", err);
+  }
+}
+
 function refreshReadyPageContent(){
   const idx = PAGES.findIndex(p=>p.kind==="ready");
   if(idx<0) return;
@@ -1062,6 +1093,11 @@ async function handleGateNext(){
       PREFILL.role = (res.role === "수사관") ? "investigator" : "apo";
       PREFILL.caseType = (res.caseType === "재발") ? "recur" : "single";
       RAW_CODE = raw;
+
+      if(PREFILL.caseDetail && PREFILL.caseDetail.surveySet === "recur_investigator"){
+        await swapToAlternateSurvey(ALT_SURVEY_DATA_URL);
+      }
+
       computeActivePages();
       refreshReadyPageContent();
       refreshInterpolatedTexts();
@@ -1125,7 +1161,7 @@ function showThankYou(){
    ========================================================= */
 async function initApp(){
   try{
-    const res = await fetch(SURVEY_DATA_URL);
+    const res = await fetch(SURVEY_DATA_URL + "?v=" + Date.now(), { cache: "no-store" });
     if(!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
 
