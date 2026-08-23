@@ -143,10 +143,14 @@ select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-r
 .gate-input:focus{ outline:2px solid var(--accent-deep); border-color:var(--accent-deep); }
 .gate-example{ font-size:12px; color:var(--ink-faint); margin-bottom:6px; }
 .gate-error{ display:none; color:var(--error); font-size:13px; font-weight:700; margin-top:12px; background:var(--error-soft); border-radius:var(--radius-sm); padding:10px 14px; }
+.gate-contact{ margin-top:22px; font-size:12.5px; color:var(--ink-faint); }
+.gate-contact a{ color:var(--primary-deep); text-decoration:underline; }
 .gate-error.show{ display:block; }
 
 .consent-box{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px; font-size:13.6px; color:var(--ink-soft); text-align:left; line-height:1.8; margin:18px 0; box-shadow:var(--shadow-soft); white-space:pre-wrap; }
 .consent-box b{ color:var(--ink); }
+.consent-doc-box{ margin-bottom:16px; }
+.consent-doc-link{ display:inline-block; margin:8px 0 14px; font-size:13px; color:var(--primary-deep); text-decoration:underline; }
 
 .ready-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px; text-align:left; margin:18px 0; box-shadow:var(--shadow-soft); }
 .ready-card .row{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--line-soft); }
@@ -174,7 +178,7 @@ select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-r
 .coding-table th, .coding-table td{ padding:8px 12px; font-size:13px; text-align:left; border-bottom:1px solid var(--line-soft); }
 .coding-table th{ background:var(--card-soft); color:var(--ink-soft); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; }
 .coding-table tr:last-child td{ border-bottom:none; }
-.coding-table td.score-col{ text-align:right; font-weight:700; color:var(--primary-deep); width:90px; }
+.coding-table td.score-col{ text-align:right; font-weight:700; color:var(--primary-deep); width:90px; white-space:nowrap; }
 .item-subinfo{ font-size:11.5px; color:var(--ink-faint); margin-top:3px; }
 .weighted-tag{ display:inline-block; margin-left:7px; padding:2px 8px; border-radius:20px; background:var(--accent-soft); color:var(--accent-deep); font-size:10.5px; font-weight:700; vertical-align:middle; }
 .dossier-error{ font-size:12px; color:var(--error); background:var(--error-soft); border-radius:var(--radius-sm); padding:10px 13px; margin-bottom:12px; }
@@ -269,6 +273,7 @@ const CONFIG = {
    끝나면 채워집니다(initApp 참고).
    ========================================================= */
 let PAGES = [];
+let MAIN_QUESTION_MAP = {};
 let RANK_POOL = [];
 let CM_POOL = [];
 let GRID_OPTS = [];
@@ -520,7 +525,8 @@ function interpolateText(text){
   const cd = PREFILL.caseDetail || {};
   return text
     .replace(/\{reportDate\}/g, cd.reportDate || "최초 신고")
-    .replace(/\{firstRecurDate\}/g, cd.firstRecurDate || "재신고");
+    .replace(/\{firstRecurDate\}/g, cd.firstRecurDate || "재신고")
+    .replace(/\{gradeAssigned\}/g, cd.gradeAssigned || "등급 정보 없음");
 }
 
 function buildQuestionCard(q){
@@ -581,6 +587,19 @@ function condMet(cond){
 
 function roleAllows(q){ return !q.role || q.role === PREFILL.role; }
 
+/* 코드 확인 후 역할(PREFILL.role)이 정해지면, 조건부 여부와 무관하게
+   역할 전용 문항 전체(모든 페이지, 이미 그려진 DOM 포함)에 숨김 처리를 적용한다. */
+function applyRoleVisibility(){
+  document.querySelectorAll('.q[data-role]').forEach(el=>{
+    const qid = el.id.replace("card-", "");
+    const q = findQuestion(qid);
+    if(!q) return;
+    const allowed = roleAllows(q);
+    el.classList.toggle("hidden", !allowed);
+    if(!allowed) delete answers[qid];
+  });
+}
+
 function evaluateConditionsInPage(){
   document.querySelectorAll('.page.active .q[data-cond="1"]').forEach(el=>{
     const qid = el.id.replace("card-","");
@@ -628,21 +647,45 @@ function buildGatePage(page){
   el.appendChild(example);
   const err = document.createElement("div"); err.className="gate-error"; err.id="gate-error";
   el.appendChild(err);
+  const contact = document.createElement("div");
+  contact.className = "gate-contact";
+  contact.innerHTML = `접속에 문제가 있으시면 최예영 연구원(<a href="mailto:choiyea02@naver.com">choiyea02@naver.com</a>)에게 문의해 주세요.`;
+  el.appendChild(contact);
   return el;
 }
 
 function buildConsentPage(page){
   const el = document.createElement("div");
   el.innerHTML = `<div class="page-head"><h2>참여 동의</h2></div>`;
-  const box = document.createElement("div");
-  box.className = "consent-box";
-  box.textContent = page.consentText;
-  el.appendChild(box);
-  const q = {id:"__consent__", type:"radio", text:"", opts:["예, 동의합니다.","아니오"], req:true};
-  const card = document.createElement("div");
-  card.className = "q"; card.id = "card-__consent__";
-  card.appendChild(buildOptList(q, "radio"));
-  el.appendChild(card);
+  const intro = document.createElement("div");
+  intro.className = "page-intro";
+  intro.textContent = page.consentText;
+  el.appendChild(intro);
+
+  const docs = [
+    {id:"research", title:"(1) 연구 참여 동의서", href:"consent-research.pdf"},
+    {id:"privacy", title:"(2) 개인정보 수집·이용 동의서", href:"consent-privacy.pdf"},
+  ];
+  docs.forEach(doc=>{
+    const box = document.createElement("div");
+    box.className = "q consent-doc-box";
+    box.id = "card-__consent_" + doc.id + "__";
+    box.innerHTML = `<div class="q-text">${escapeHtml(doc.title)}<span class="req">*</span></div>
+      <a class="consent-doc-link" href="${doc.href}" target="_blank" rel="noopener">동의서 전문 보기 (PDF)</a>`;
+    const q = {id:"__consent_"+doc.id+"__", type:"radio", text:"", opts:["예, 동의합니다.","아니오"], req:true};
+    box.appendChild(buildOptList(q, "radio"));
+    el.appendChild(box);
+  });
+
+  const nameBox = document.createElement("div");
+  nameBox.className = "q"; nameBox.id = "card-__consent_name__";
+  nameBox.innerHTML = `<div class="q-text">본인은 위 동의 내용을 모두 확인하였으며, 아래에 성명을 적어 서명을 대신합니다.<span class="req">*</span></div>`;
+  const nameInput = document.createElement("input");
+  nameInput.type = "text"; nameInput.className = "qi"; nameInput.placeholder = "성명을 입력해 주세요";
+  nameInput.addEventListener("input", ()=>{ answers["__consent_name__"] = nameInput.value.trim(); clearInvalid("__consent_name__"); });
+  nameBox.appendChild(nameInput);
+  el.appendChild(nameBox);
+
   return el;
 }
 
@@ -689,14 +732,21 @@ function buildDossierHtml(cd){
     + kvRow("피해자", fmtPerson(cd.victim)) + kvRow("가해자", fmtPerson(cd.offender))
     + kvRow("죄종", cd.crimeType) + kvRow("가·피해자 관계", cd.relationship)
     + kvRow("흉기 사용", cd.weaponUsed) + kvRow("쌍방 여부", cd.mutual)
+    + kvRow("아동 유무", cd.childInvolved)
     + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent);
   if(basicRows) html += `<div class="dossier-section"><div class="dossier-section-title">기본정보</div><div class="kv-grid">${basicRows}</div></div>`;
 
   const histRows = kvRow("과거 3년 사건접수", fmtBreakdown(cd.history3yr)) + kvRow("과거 1년 신고", fmtBreakdown(cd.history1yr));
   if(histRows) html += `<div class="dossier-section"><div class="dossier-section-title">과거 전력</div><div class="kv-grid single">${histRows}</div></div>`;
 
+  const monitorRows = kvRow("사후콜백 시작", cd.callbackStart) + kvRow("해제 여부", cd.releaseStatus) + kvRow("해제 사유", cd.releaseReason);
+  if(monitorRows) html += `<div class="dossier-section"><div class="dossier-section-title">모니터링</div><div class="kv-grid single">${monitorRows}</div></div>`;
+
   const recurRows = kvRow("재신고 횟수", fmtBreakdown(cd.recurCount)) + kvRow("최초 재신고일", cd.firstRecurDate);
-  if(recurRows) html += `<div class="dossier-section"><div class="dossier-section-title">재신고</div><div class="kv-grid single">${recurRows}</div></div>`;
+  if(recurRows){
+    html += `<div class="dossier-section"><div class="dossier-section-title">재신고</div><div class="kv-grid single">${recurRows}</div>`
+      + `<div class="item-subinfo" style="margin-top:8px;">※ 위 재신고 횟수는 2026년 7월 코딩 시점 기준이며, 이후 발생한 재신고는 반영되지 않았을 수 있습니다.</div></div>`;
+  }
 
   if(cd.specialNotes){
     html += `<div class="dossier-section"><div class="dossier-section-title">특이사항</div><div class="ready-summary">${escapeHtml(cd.specialNotes)}</div></div>`;
@@ -1054,9 +1104,15 @@ async function onNextClick(){
   if(page.kind === "gate"){ await handleGateNext(); return; }
 
   if(page.kind === "consent"){
-    const chosen = answers["__consent__"];
-    if(!chosen){ document.getElementById("card-__consent__").classList.add("invalid"); return; }
-    if(chosen === "아니오"){
+    const researchOk = answers["__consent_research__"];
+    const privacyOk = answers["__consent_privacy__"];
+    const nameOk = answers["__consent_name__"] && answers["__consent_name__"].trim() !== "";
+    let hasInvalid = false;
+    if(!researchOk){ document.getElementById("card-__consent_research__").classList.add("invalid"); hasInvalid = true; }
+    if(!privacyOk){ document.getElementById("card-__consent_privacy__").classList.add("invalid"); hasInvalid = true; }
+    if(!nameOk){ document.getElementById("card-__consent_name__").classList.add("invalid"); hasInvalid = true; }
+    if(hasInvalid) return;
+    if(researchOk === "아니오" || privacyOk === "아니오"){
       document.getElementById("main").style.display = "none";
       document.getElementById("progress-wrap").style.display = "none";
       document.getElementById("page-nav").style.display = "none";
@@ -1118,6 +1174,7 @@ async function handleGateNext(){
       }
 
       computeActivePages();
+      applyRoleVisibility();
       refreshReadyPageContent();
       refreshInterpolatedTexts();
       goTo(pageIndex+1, true);
@@ -1131,7 +1188,7 @@ async function handleGateNext(){
     if(err && err.message === "timeout"){
       errEl.textContent = "응답이 너무 늦어 시간초과되었습니다. 네트워크가 느리거나 불안정할 수 있습니다. 다시 시도해 주세요.";
     } else {
-      errEl.textContent = "확인 중 오류가 발생했습니다 (네트워크 차단 가능성). 다른 네트워크(휴대폰 데이터 등)나 다른 브라우저로 시도해 보시고, 계속되면 담당자에게 문의해 주세요.";
+      errEl.textContent = "확인 중 오류가 발생했습니다 (네트워크 차단 가능성). 크롬 시크릿 모드로 접속하시거나, 사용 중이신 구글 계정을 로그아웃하신 뒤 다시 시도해 주세요. 그래도 안 되시면 다른 네트워크(휴대폰 데이터 등)나 다른 브라우저로 시도해 보시고, 계속되면 담당자에게 문의해 주세요.";
     }
     errEl.classList.add("show");
     updateNavUI();
@@ -1150,10 +1207,26 @@ function submitToBackend(){
   form.innerHTML = "";
   form.action = CONFIG.SUBMIT_URL;
 
-  const payload = Object.assign({}, answers, {
-    _code: RAW_CODE, _officer: PREFILL.officer, _crime: PREFILL.crime, _case: PREFILL.case,
-    _role: PREFILL.role, _caseType: PREFILL.caseType, _submitted_at: new Date().toISOString()
+  // 설문에 실제 등장하는 순서대로 답변 필드를 나열(알파벳 정렬 방지) - 뒤에 메타데이터 추가
+  const orderedAnswers = {};
+  PAGES.forEach(page=>{
+    (page.questions || []).forEach(q=>{
+      if(Object.prototype.hasOwnProperty.call(answers, q.id)) orderedAnswers[q.id] = answers[q.id];
+    });
   });
+  // 혹시 PAGES에 없는(대체 세트 전환 전 잔여) 답변이 있으면 끝에 붙여 유실 방지
+  Object.keys(answers).forEach(k=>{ if(!(k in orderedAnswers)) orderedAnswers[k] = answers[k]; });
+
+  const payload = Object.assign({}, orderedAnswers, {
+    _code: RAW_CODE, _officer: PREFILL.officer, _crime: PREFILL.crime, _case: PREFILL.case,
+    _role: PREFILL.role, _caseType: PREFILL.caseType, _submitted_at: new Date().toISOString(),
+    _consentName: answers["__consent_name__"] || "",
+    _consentResearch: answers["__consent_research__"] || "",
+    _consentPrivacy: answers["__consent_privacy__"] || "",
+  });
+  delete payload["__consent_name__"];
+  delete payload["__consent_research__"];
+  delete payload["__consent_privacy__"];
 
   Object.keys(payload).forEach(k=>{
     const v = payload[k];
@@ -1193,6 +1266,12 @@ async function initApp(){
     GRID_OPTS = data.optionPools.__POOL_GRID_OPTS__ || [];
     PAGES = data.pages;
     resolveOptionPools(PAGES, data.optionPools);
+
+    MAIN_QUESTION_MAP = {};
+    PAGES.forEach(page=>{
+      if(page.kind !== "form") return;
+      (page.questions || []).forEach(q=>{ MAIN_QUESTION_MAP[q.id] = q; });
+    });
 
     ACTIVE_PAGES = [PAGES[0], PAGES[1], PAGES[2]];
 
