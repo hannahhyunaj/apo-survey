@@ -1246,6 +1246,8 @@ function submitToBackend(){
   // 혹시 PAGES에 없는(대체 세트 전환 전 잔여) 답변이 있으면 끝에 붙여 유실 방지
   Object.keys(answers).forEach(k=>{ if(!(k in orderedAnswers)) orderedAnswers[k] = answers[k]; });
 
+  const metaOrder = ["_code","_officer","_crime","_case","_role","_caseType","_surveySet",
+    "_submitted_at","_consentName","_consentResearch","_consentPrivacy"];
   const payload = Object.assign({}, orderedAnswers, {
     _code: RAW_CODE, _officer: PREFILL.officer, _crime: PREFILL.crime, _case: PREFILL.case,
     _role: PREFILL.role, _caseType: PREFILL.caseType,
@@ -1258,6 +1260,11 @@ function submitToBackend(){
   delete payload["__consent_name__"];
   delete payload["__consent_research__"];
   delete payload["__consent_privacy__"];
+
+  // 구글 앱스 스크립트의 e.parameter는 도착한 순서를 그대로 보장해주지 않으므로
+  // (내부적으로 순서가 뒤섞이는 경우가 있음), 올바른 열 순서를 별도 필드로 명시해서
+  // Code.gs가 이 목록을 그대로 헤더로 쓰도록 한다.
+  payload["_fieldOrder"] = JSON.stringify(metaOrder.concat(Object.keys(orderedAnswers)));
 
   Object.keys(payload).forEach(k=>{
     const v = payload[k];
