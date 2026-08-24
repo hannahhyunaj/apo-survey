@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- BUILD-VERSION: 2026-08-25-01 (이 줄이 안 보이면 예전 파일이 배포된 것입니다. Ctrl+F로 "BUILD-VERSION" 검색해서 확인하세요) -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -151,6 +152,7 @@ select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-r
 .consent-box b{ color:var(--ink); }
 .consent-doc-box{ margin-bottom:16px; }
 .consent-doc-link{ display:inline-block; margin:8px 0 14px; font-size:13px; color:var(--primary-deep); text-decoration:underline; }
+.consent-doc-note{ font-size:11.5px; color:var(--ink-faint); margin-top:4px; }
 
 .ready-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px; text-align:left; margin:18px 0; box-shadow:var(--shadow-soft); }
 .ready-card .row{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--line-soft); }
@@ -665,13 +667,15 @@ function buildConsentPage(page){
 
   const docs = [
     {id:"research", title:"(1) 연구 참여 동의서", href:"consent-research.pdf"},
-    {id:"privacy", title:"(2) 개인정보 수집·이용 동의서", href:"consent-privacy.pdf"},
+    {id:"privacy", title:"(2) 개인정보 수집·이용 동의서", href:"consent-privacy.pdf", note:"사례비 지급을 위해 개인정보 수집 동의서 작성을 요청드립니다."},
   ];
   docs.forEach(doc=>{
     const box = document.createElement("div");
     box.className = "q consent-doc-box";
     box.id = "card-__consent_" + doc.id + "__";
+    const noteHtml = doc.note ? `<div class="consent-doc-note">${escapeHtml(doc.note)}</div>` : "";
     box.innerHTML = `<div class="q-text">${escapeHtml(doc.title)}<span class="req">*</span></div>
+      ${noteHtml}
       <a class="consent-doc-link" href="${doc.href}" target="_blank" rel="noopener">동의서 전문 보기 (PDF)</a>`;
     const q = {id:"__consent_"+doc.id+"__", type:"radio", text:"", opts:["예, 동의합니다.","아니오"], req:true};
     box.appendChild(buildOptList(q, "radio"));
@@ -735,8 +739,12 @@ function buildDossierHtml(cd){
     + kvRow("흉기 사용", cd.weaponUsed) + kvRow("쌍방 여부", cd.mutual)
     + kvRow("아동 유무", cd.childInvolved)
     + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent)
-    + kvRow("위험성 분류", cd.riskClassification);
+    + kvRow("위험성 분류", cd.riskClassification) + kvRow("KICS 접수번호", cd.kicsNumber);
   if(basicRows) html += `<div class="dossier-section"><div class="dossier-section-title">기본정보</div><div class="kv-grid">${basicRows}</div></div>`;
+
+  if(cd.caseSummary){
+    html += `<div class="dossier-section"><div class="dossier-section-title">사건개요</div><div class="ready-summary">${escapeHtml(cd.caseSummary)}</div></div>`;
+  }
 
   const histRows = kvRow("과거 3년 사건접수", fmtBreakdown(cd.history3yr)) + kvRow("과거 1년 신고", fmtBreakdown(cd.history1yr));
   if(histRows) html += `<div class="dossier-section"><div class="dossier-section-title">과거 전력</div><div class="kv-grid single">${histRows}</div></div>`;
