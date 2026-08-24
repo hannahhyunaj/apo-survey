@@ -734,12 +734,13 @@ function buildDossierHtml(cd){
   if(investRows) html += `<div class="dossier-section"><div class="dossier-section-title">조사자 정보</div><div class="kv-grid">${investRows}</div></div>`;
 
   const basicRows = kvRow("신고접수일", cd.reportDate)
+    + kvRow("KICS 접수번호", cd.kicsNumber)
     + kvRow("피해자", fmtPerson(cd.victim)) + kvRow("가해자", fmtPerson(cd.offender))
     + kvRow("죄종", cd.crimeType) + kvRow("가·피해자 관계", cd.relationship)
     + kvRow("흉기 사용", cd.weaponUsed) + kvRow("쌍방 여부", cd.mutual)
     + kvRow("아동 유무", cd.childInvolved)
     + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent)
-    + kvRow("위험성 분류", cd.riskClassification) + kvRow("KICS 접수번호", cd.kicsNumber);
+    + kvRow("위험성 분류", cd.riskClassification);
   if(basicRows) html += `<div class="dossier-section"><div class="dossier-section-title">기본정보</div><div class="kv-grid">${basicRows}</div></div>`;
 
   if(cd.caseSummary){
@@ -881,12 +882,13 @@ function buildReminderPage(page){
   prominent.style.background = "var(--accent-soft)";
   prominent.style.border = "2px solid var(--accent-deep)";
   prominent.style.borderRadius = "var(--radius-lg)";
-  prominent.style.padding = "28px 20px";
-  prominent.style.fontSize = "16.5px";
+  prominent.style.padding = "28px 24px";
+  prominent.style.fontSize = "15.5px";
+  prominent.style.lineHeight = "1.7";
   prominent.style.color = "var(--accent-deep)";
   prominent.style.fontWeight = "700";
   prominent.style.margin = "32px auto 32px";
-  prominent.style.maxWidth = "480px";
+  prominent.style.maxWidth = "560px";
   prominent.style.textAlign = "center";
   prominent.style.whiteSpace = "pre-wrap";
   prominent.textContent = page.reminder;
