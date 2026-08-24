@@ -171,6 +171,7 @@ select.qi{ width:100%; padding:11px 13px; border:1px solid var(--line); border-r
 
 .scale-toggle{ width:100%; display:flex; justify-content:space-between; align-items:center; background:var(--card-soft); border:1px solid var(--line); border-radius:var(--radius-md); padding:13px 16px; cursor:pointer; font-size:13.8px; font-weight:700; color:var(--ink); margin-bottom:8px; }
 .scale-toggle .score-badge{ background:var(--accent-soft); color:var(--accent-deep); border-radius:20px; padding:4px 11px; font-size:12px; font-weight:800; }
+.scale-click-guide{ font-size:13px; font-weight:700; color:var(--ink); margin:0 0 6px 2px; }
 .scale-body{ display:none; margin:-4px 0 12px; }
 .scale-body.open{ display:block; }
 
@@ -733,7 +734,8 @@ function buildDossierHtml(cd){
     + kvRow("죄종", cd.crimeType) + kvRow("가·피해자 관계", cd.relationship)
     + kvRow("흉기 사용", cd.weaponUsed) + kvRow("쌍방 여부", cd.mutual)
     + kvRow("아동 유무", cd.childInvolved)
-    + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent);
+    + kvRow("부여 등급", cd.gradeAssigned) + kvRow("현재 등급", cd.gradeCurrent)
+    + kvRow("위험성 분류", cd.riskClassification);
   if(basicRows) html += `<div class="dossier-section"><div class="dossier-section-title">기본정보</div><div class="kv-grid">${basicRows}</div></div>`;
 
   const histRows = kvRow("과거 3년 사건접수", fmtBreakdown(cd.history3yr)) + kvRow("과거 1년 신고", fmtBreakdown(cd.history1yr));
@@ -815,6 +817,7 @@ function buildReadyPage(page){
           /문항.*(확인|보기|열람|눌러|상세|자세히|항목)/.test(prev.textContent)
         ) {
           prev.textContent = "상세 문항을 보려면 클릭";
+          prev.className = "scale-click-guide";
           foundGuide = true;
           break;
         }
@@ -822,9 +825,7 @@ function buildReadyPage(page){
       }
       if (!foundGuide) {
         const guide = document.createElement("div");
-        guide.style.fontSize = "12.8px";
-        guide.style.color = "var(--ink-faint)";
-        guide.style.margin = "0 0 6px 2px";
+        guide.className = "scale-click-guide";
         guide.textContent = "상세 문항을 보려면 클릭";
         firstToggle.parentNode.insertBefore(guide, firstToggle);
       }
@@ -840,6 +841,7 @@ function buildReadyPage(page){
           /문항.*(확인|보기|열람|눌러|상세|자세히|항목)/.test(prev.textContent)
         ) {
           prev.textContent = "상세 문항을 보려면 클릭";
+          prev.className = "scale-click-guide";
           foundGuide = true;
           break;
         }
@@ -847,9 +849,7 @@ function buildReadyPage(page){
       }
       if (!foundGuide) {
         const guide = document.createElement("div");
-        guide.style.fontSize = "12.8px";
-        guide.style.color = "var(--ink-faint)";
-        guide.style.margin = "0 0 6px 2px";
+        guide.className = "scale-click-guide";
         guide.textContent = "상세 문항을 보려면 클릭";
         firstToggle.parentNode.insertBefore(guide, firstToggle);
       }
@@ -1219,7 +1219,9 @@ function submitToBackend(){
 
   const payload = Object.assign({}, orderedAnswers, {
     _code: RAW_CODE, _officer: PREFILL.officer, _crime: PREFILL.crime, _case: PREFILL.case,
-    _role: PREFILL.role, _caseType: PREFILL.caseType, _submitted_at: new Date().toISOString(),
+    _role: PREFILL.role, _caseType: PREFILL.caseType,
+    _surveySet: (PREFILL.caseDetail && PREFILL.caseDetail.surveySet) || "main",
+    _submitted_at: new Date().toISOString(),
     _consentName: answers["__consent_name__"] || "",
     _consentResearch: answers["__consent_research__"] || "",
     _consentPrivacy: answers["__consent_privacy__"] || "",

@@ -181,7 +181,7 @@
           "id": "V2_1",
           "text": "어떤 것이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "V2",
             "op": "=",
@@ -236,7 +236,7 @@
           "id": "N2_1",
           "text": "어떤 것이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "N2",
             "op": "=",
@@ -397,7 +397,7 @@
           "id": "R12_1",
           "text": "어떤 것이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "R12",
             "op": "=",
@@ -451,7 +451,7 @@
           "id": "P2_1",
           "text": "어떤 것이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "P2",
             "op": "=",
@@ -550,7 +550,7 @@
           "id": "Vi3",
           "text": "어떤 정보였습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "Vi2",
             "op": "=",
@@ -648,7 +648,7 @@
           "id": "G5",
           "text": "어떤 것이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "G4",
             "op": "=",
@@ -692,7 +692,7 @@
           "id": "Pi3",
           "text": "어떤 정보였습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "Pi2",
             "op": "=",
@@ -865,7 +865,7 @@
           "id": "J10_1",
           "text": "조정할 필요가 있다면, 그 이유가 무엇이라고 생각하십니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "J10",
             "op": "in",
@@ -1091,7 +1091,7 @@
           "id": "C7_1",
           "text": "어떤 조짐이었습니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "C7",
             "op": "starts",
@@ -1113,7 +1113,7 @@
           "id": "C8_1",
           "text": "그 이유는 무엇입니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "role": "apo",
           "cond": {
             "on": "C8",
@@ -1198,7 +1198,7 @@
           "id": "L4_1",
           "text": "이 사건의 판례번호를 적어주십시오.",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "L4",
             "op": "=",
@@ -1228,7 +1228,7 @@
           "id": "M1_1",
           "text": "그 이유는 무엇입니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "M1",
             "op": "<=",
@@ -1251,7 +1251,7 @@
           "id": "M2_1",
           "text": "그 이유는 무엇입니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "M2",
             "op": "in",
@@ -1275,7 +1275,7 @@
           "id": "M3_1",
           "text": "그 이유는 무엇입니까?",
           "type": "textarea",
-          "req": false,
+          "req": true,
           "cond": {
             "on": "M3",
             "op": "<=",
